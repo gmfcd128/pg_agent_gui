@@ -1,6 +1,8 @@
 package model;
 
-public class LoginCredential {
+import java.io.Serializable;
+
+public class LoginCredential implements Serializable {
     private String database;
     private String sshUsername;
     private String sshPassword;
@@ -47,8 +49,36 @@ public class LoginCredential {
         return postgresPassword;
     }
 
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public void setSshUsername(String sshUsername) {
+        this.sshUsername = sshUsername;
+    }
+
+    public void setSshPassword(String sshPassword) {
+        this.sshPassword = sshPassword;
+    }
+
+    public void setPostgresUsername(String postgresUsername) {
+        this.postgresUsername = postgresUsername;
+    }
+
+    public void setPostgresPassword(String postgresPassword) {
+        this.postgresPassword = postgresPassword;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     @Override
     public String toString() {
-        return this.serverName + "( ip: " + this.ip + ")";
+        return this.serverName + "( IP: " + this.ip + ")";
     }
 }

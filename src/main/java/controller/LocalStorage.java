@@ -8,6 +8,7 @@ import java.util.List;
 
 public class LocalStorage {
     private String CREDENTIALS_FILE_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "credentials.ser";
+    private String CONFIG_FILE_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "configurations.ser";
     private LocalStorage() {}
     private static LocalStorage instance;
     public static LocalStorage getInstance() {
@@ -42,4 +43,6 @@ public class LocalStorage {
             e.printStackTrace();
         }
     }
+
+
 }
