@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import model.PGConfigDelta;
 
 import java.io.File;
@@ -63,9 +64,25 @@ public class SettingsController {
     private void reloadConfigDropdown() {
         File[] configFiles = LocalStorage.getInstance().getLocalConfigFiles();
         localConfigFiles = FXCollections.observableList(new ArrayList<>(Arrays.asList(configFiles)));
+        StringConverter<File> converter = new StringConverter<File>() {
+            @Override
+            public String toString(File object) {
+                if (object != null) {
+                    return object.getName();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public File fromString(String string) {
+                return null;
+            }
+        };
+        localConfigComboBox.setConverter(converter);
         localConfigComboBox.setItems(localConfigFiles);
         localConfigComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            List<PGConfigDelta> deltaList = LocalStorage.getInstance().getConfigurationFromFile(newVal); // to be continued..
+            List<PGConfigDelta> deltaList = LocalStorage.getInstance().getConfigurationFromFile(newVal);
             populateGridView(localConfigGridPane, deltaList);
         });
     }

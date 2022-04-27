@@ -1,6 +1,8 @@
 package model;
 
-public class PGConfigDelta {
+import java.io.Serializable;
+
+public class PGConfigDelta implements Serializable {
     private String name;
     private String value;
     private String unit;

@@ -63,19 +63,30 @@ public class LocalStorage {
     }
 
     public List<PGConfigDelta> getConfigurationFromFile(File file) {
-        return new ArrayList<>();
+        List<PGConfigDelta> resultList = new ArrayList<>();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(CONFIG_DIR_LOCATION + file.getName());
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            List<PGConfigDelta> persistedList = (List<PGConfigDelta>) objectInputStream.readObject();
+            resultList.addAll(persistedList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultList;
     }
 
     public void saveConfigLocally(String filename, List<PGConfigDelta> deltaList) {
+        File directory = new File(CONFIG_DIR_LOCATION);
         File destinationFile = new File(CONFIG_DIR_LOCATION + filename);
-        if (!destinationFile.exists()) {
-            destinationFile.mkdirs();
+        if (!directory.exists()) {
+            directory.mkdir();
         }
         try{
-            FileWriter fw = new FileWriter(destinationFile.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("name,setting,unit,vartype,min_val,max_val,enumvals");
-            bw.close();
+            FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(deltaList);
+            objectOutputStream.close();
+            fileOutputStream.close();
         }
         catch (IOException e){
             e.printStackTrace();
@@ -83,8 +94,6 @@ public class LocalStorage {
         }
 
     }
-
-
 
 
 }
