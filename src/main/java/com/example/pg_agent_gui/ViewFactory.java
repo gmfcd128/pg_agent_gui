@@ -39,8 +39,8 @@ public class ViewFactory {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("database_config.fxml"));
         fxmlLoader.setController(new SettingsController(stage, server));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 854);
-        stage.setMinWidth(600);
+        Scene scene = new Scene(fxmlLoader.load(), 800, 854);
+        stage.setMinWidth(800);
         stage.setMinHeight(854);
         stage.setTitle("Postgres auto experiment GUI - 設定管理");
         stage.setScene(scene);

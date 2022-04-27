@@ -8,8 +8,9 @@ public class PGConfigDelta implements Serializable {
     private String unit;
     private ValueType valueType;
     private String[] options;
-    private double allowedMin;
-    private double allowedMax;
+    private int allowedMin;
+    private long allowedMax;
+    private boolean modified;
 
     public PGConfigDelta(String name, String value, String unit, String valueType) {
         this.name = name;
@@ -27,18 +28,35 @@ public class PGConfigDelta implements Serializable {
         } else if (valueType.equals("real")) {
             this.valueType = ValueType.REAL;
         }
+        this.modified = false;
     }
 
-    public void setRange(double min, double max) {
-        if (valueType == ValueType.INTEGER || valueType == ValueType.REAL) {
-            this.allowedMin = min;
-            this.allowedMax = max;
-        }
+    public int getAllowedMin() {
+        return allowedMin;
+    }
+
+    public long getAllowedMax() {
+        return allowedMax;
+    }
+
+    public String[] getOptions() {
+        return options;
     }
 
     public void setOptions(String[] options) {
         if (valueType == ValueType.ENUM) {
             this.options = options;
+        }
+    }
+
+    public ValueType getValueType() {
+        return valueType;
+    }
+
+    public void setRange(int min, long max) {
+        if (valueType == ValueType.INTEGER || valueType == ValueType.REAL) {
+            this.allowedMin = min;
+            this.allowedMax = max;
         }
     }
 
@@ -52,6 +70,10 @@ public class PGConfigDelta implements Serializable {
 
     public String getUnit() {
         return unit;
+    }
+
+    public boolean isModified() {
+        return this.modified;
     }
 
     public void updateValue(String value) {
@@ -76,8 +98,8 @@ public class PGConfigDelta implements Serializable {
                 return;
             }
         }
+        modified = true;
     }
 
-}
 
-enum ValueType {BOOL, ENUM, INTEGER, REAL, STRING}
+}

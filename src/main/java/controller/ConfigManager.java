@@ -14,7 +14,7 @@ public class ConfigManager {
         Statement st;
         try {
             st = jdbcConnection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT name, setting, unit, vartype, min_val, max_val, enumvals FROM pg_settings;");
+            ResultSet rs = st.executeQuery("SELECT * FROM pg_settings WHERE source <> 'client' AND context <> 'internal';");
             while (rs.next()) {
                 String name = rs.getString("name");
                 String setting = rs.getString("setting");
@@ -22,8 +22,8 @@ public class ConfigManager {
                 String varType = rs.getString("vartype");
                 PGConfigDelta configDelta = new PGConfigDelta(name, setting, unit, varType);
                 if (varType.equals("integer") || varType.equals("real")) {
-                    double minValue = rs.getDouble("min_val");
-                    double maxValue = rs.getDouble("max_val");
+                    int minValue = rs.getInt("min_val");
+                    long maxValue = Double.valueOf(rs.getString("max_val")).longValue();
                     configDelta.setRange(minValue, maxValue);
                 }
                 if (varType.equals("enum")) {

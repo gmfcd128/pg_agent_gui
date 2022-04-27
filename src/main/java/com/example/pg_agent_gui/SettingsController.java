@@ -11,16 +11,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.PGConfigDelta;
+import model.ValueType;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class SettingsController {
     private Stage stage;
@@ -56,7 +55,7 @@ public class SettingsController {
         serverConfig = configManager.downloadFromServer(server);
         System.out.println("Server configuration get!");
         System.out.println(serverConfig);
-        populateGridView(serverConfigGridPane, serverConfig);
+        populateGridView(serverConfigGridPane, serverConfig, true);
 
         reloadConfigDropdown();
     }
@@ -83,22 +82,50 @@ public class SettingsController {
         localConfigComboBox.setItems(localConfigFiles);
         localConfigComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
             List<PGConfigDelta> deltaList = LocalStorage.getInstance().getConfigurationFromFile(newVal);
-            populateGridView(localConfigGridPane, deltaList);
+            populateGridView(localConfigGridPane, deltaList, false);
         });
     }
 
-    private void populateGridView(GridPane gridPane, List<PGConfigDelta> configDeltas) {
+    private void populateGridView(GridPane gridPane, List<PGConfigDelta> configDeltas, boolean readOnly) {
         for (int i = 0; i < configDeltas.size(); i++) {
             PGConfigDelta configDelta = configDeltas.get(i);
             Label label = new Label(configDelta.getName());
-            TextField textField = new TextField(configDelta.getValue());
-            Label unit = new Label(configDelta.getUnit());
-            gridPane.add(label, 0, i);
-            gridPane.add(textField, 1, i);
-            gridPane.add(unit, 2, i);
+            if (readOnly) {
+                Label value = new Label(configDelta.getValue());
+                gridPane.add(value, 1, i);
+                GridPane.setMargin(value, new Insets(5));
+            } else {
+                if (configDelta.getValueType() == ValueType.ENUM) {
+                    String[] options = configDelta.getOptions();
+                    ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableArrayList(Arrays.asList(options)));
+                    comboBox.getSelectionModel().select(configDelta.getValue());
+                    gridPane.add(comboBox, 1, i);
+                    GridPane.setMargin(comboBox, new Insets(5));
+                } else if (configDelta.getValueType() == ValueType.BOOL) {
+                    ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableArrayList("on", "off"));
+                    comboBox.getSelectionModel().select(configDelta.getValue());
+                    gridPane.add(comboBox, 1, i);
+                    GridPane.setMargin(comboBox, new Insets(5));
+                } else {
+                    TextField textField = new TextField(configDelta.getValue());
+                    gridPane.add(textField, 1, i);
+                    GridPane.setMargin(textField, new Insets(5));
+                }
+            }
 
+            Label unit = new Label();
+            if (configDelta.getValueType() == ValueType.INTEGER || configDelta.getValueType() == ValueType.REAL) {
+                if (configDelta.getUnit() != null) {
+                    unit.setText(configDelta.getUnit() + " (range: " + configDelta.getAllowedMin() + "~" + configDelta.getAllowedMax() + ")");
+                } else {
+                    unit.setText("(range: " + configDelta.getAllowedMin() + "~" + configDelta.getAllowedMax() + ")");
+                }
+            } else {
+                unit.setText(configDelta.getUnit());
+            }
+            gridPane.add(label, 0, i);
+            gridPane.add(unit, 2, i);
             GridPane.setMargin(label, new Insets(5));
-            GridPane.setMargin(textField, new Insets(5));
             GridPane.setMargin(unit, new Insets(5));
         }
     }
@@ -112,4 +139,6 @@ public class SettingsController {
         LocalStorage.getInstance().saveConfigLocally(fileName, serverConfig);
         reloadConfigDropdown();
     }
+
+
 }
