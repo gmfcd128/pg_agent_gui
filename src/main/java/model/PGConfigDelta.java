@@ -8,6 +8,7 @@ public class PGConfigDelta {
     private String[] options;
     private double allowedMin;
     private double allowedMax;
+
     public PGConfigDelta(String name, String value, String unit, String valueType) {
         this.name = name;
         this.value = value;
@@ -16,6 +17,7 @@ public class PGConfigDelta {
             this.valueType = ValueType.STRING;
         } else if (valueType.equals("bool")) {
             this.valueType = ValueType.BOOL;
+            this.options = new String[]{"on", "off"};
         } else if (valueType.equals("enum")) {
             this.valueType = ValueType.ENUM;
         } else if (valueType.equals("integer")) {
@@ -37,6 +39,43 @@ public class PGConfigDelta {
             this.options = options;
         }
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void updateValue(String value) {
+        if (this.valueType == ValueType.STRING) {
+            this.value = value;
+        } else if (this.valueType == ValueType.INTEGER) {
+            try {
+                int test = Integer.parseInt(value);
+                if (allowedMin < test && test < allowedMax) {
+                    this.value = value;
+                }
+            } catch (Exception e) {
+                return;
+            }
+        } else if (this.valueType == ValueType.REAL) {
+            try {
+                double test = Double.parseDouble(value);
+                if (allowedMin < test && test < allowedMax) {
+                    this.value = value;
+                }
+            } catch (Exception e) {
+                return;
+            }
+        }
+    }
+
 }
 
-enum ValueType {BOOL, ENUM,INTEGER, REAL, STRING}
+enum ValueType {BOOL, ENUM, INTEGER, REAL, STRING}

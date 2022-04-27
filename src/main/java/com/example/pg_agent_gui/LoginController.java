@@ -143,12 +143,14 @@ public class LoginController {
             server.createConnections();
         } catch (SQLException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR, "與主機建立SQL連線時發生錯誤.", ButtonType.YES, ButtonType.NO);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "與主機建立SQL連線時發生錯誤.");
             alert.showAndWait();
+            return;
         } catch (JSchException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR, "與主機建立SSH連線時發生錯誤.", ButtonType.YES, ButtonType.NO);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "與主機建立SSH連線時發生錯誤.");
             alert.showAndWait();
+            return;
         }
         // create main window
         this.stage.close();
