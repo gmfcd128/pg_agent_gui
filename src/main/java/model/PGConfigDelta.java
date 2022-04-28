@@ -77,7 +77,7 @@ public class PGConfigDelta implements Serializable {
     }
 
     public void updateValue(String value) {
-        if (this.valueType == ValueType.STRING) {
+        if (this.valueType == ValueType.STRING || this.valueType == ValueType.BOOL || this.valueType == ValueType.ENUM) {
             this.value = value;
         } else if (this.valueType == ValueType.INTEGER) {
             try {

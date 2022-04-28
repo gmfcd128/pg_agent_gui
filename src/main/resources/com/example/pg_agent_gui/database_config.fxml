@@ -101,7 +101,7 @@
             </ScrollPane>
             <HBox alignment="TOP_CENTER" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" text="更新遠端↑">
+                  <Button fx:id="uploadButton" mnemonicParsing="false" onMouseClicked="#onUploadButtonClicked" text="更新遠端↑">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>

@@ -42,6 +42,33 @@ public class Server {
         return this.jdbcConnection;
     }
 
+    public boolean testDBConnectivity() {
+        System.out.println("test pg connectivity...");
+        String result = "";
+
+        Statement st;
+        try {
+            st = jdbcConnection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT 1;");
+            while (rs.next()) {
+                System.out.print("Column 1 returned ");
+                result = rs.getString(1);
+                System.out.println(rs.getString(1));
+            }
+            rs.close();
+            st.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println(result);
+        if (!result.equals("1")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public String executeCommand(String command) {
         String result = "";
         try {
@@ -74,8 +101,7 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // clean the invisible characters returned by the system
-        result = result.replaceAll("\r\n", "");
+        result = result.replaceAll("\r\n$", "");
         result = result.replaceAll(String.valueOf(Pattern.compile("\u001B")), "");
         System.out.print(result.toCharArray());
         return result;
@@ -116,19 +142,41 @@ public class Server {
             e.printStackTrace();
         }
         // clean the invisible characters returned by the system
-        result = result.replaceAll("\r\n", "");
+        result = result.replaceAll("\r\n$", "");
         result = result.replaceAll(String.valueOf(Pattern.compile("\u001B")), "");
         //get rid of the password returned
         result = result.substring(loginCredential.getSshPassword().length());
         return result;
     }
 
-    public void applyPGConfigDelta(PGConfigDelta configDelta) {
+    public void applyPGConfigDelta(PGConfigDelta configDelta) throws PGErrorException {
         String result = "";
         String command = String.format("psql postgres -c \"alter system set %s to \'%s\'\"", configDelta.getName(), configDelta.getValue());
         result = executeCommand(command);
+        // get last line of the string returned to eliminate debug output
+        if (result.contains("\r\n.")) {
+            result = result.substring(result.lastIndexOf("\r\n"));
+        }
         if (!result.equals("ALTER SYSTEM")) {
             System.out.println("Error occured when adjusting PG setting: " + result);
+            throw new PGErrorException(result);
+        }
+        System.out.println("fuck");
+    }
+
+    public void restartPostgres() {
+        String result;
+        result = executeCommandWithSudo("systemctl restart postgresql.service");
+        if (!result.equals("")) {
+            System.out.println("Error occured when restart PG: " + result);
+        }
+        while (!testDBConnectivity()) {
+            try {
+                jdbcConnection = DriverManager.getConnection("jdbc:postgresql://140.124.183.60:5432/raritan", "ntutstudent", "Lab438!");
+                System.out.println("Connected to the PostgreSQL server successfully.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
