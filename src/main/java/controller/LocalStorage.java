@@ -75,9 +75,9 @@ public class LocalStorage {
         return resultList;
     }
 
-    public void saveConfigLocally(String filename, List<PGConfigDelta> deltaList) {
+    public boolean saveConfigLocally(String fileName, List<PGConfigDelta> deltaList) {
         File directory = new File(CONFIG_DIR_LOCATION);
-        File destinationFile = new File(CONFIG_DIR_LOCATION + filename);
+        File destinationFile = new File(CONFIG_DIR_LOCATION + fileName);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -87,12 +87,22 @@ public class LocalStorage {
             objectOutputStream.writeObject(deltaList);
             objectOutputStream.close();
             fileOutputStream.close();
+            return true;
         }
         catch (IOException e){
             e.printStackTrace();
-            System.exit(-1);
+            return false;
         }
+    }
 
+    public boolean configFileExists(String fileName) {
+        File destinationFile = new File(CONFIG_DIR_LOCATION + fileName);
+        return destinationFile.exists();
+    }
+
+    public boolean deleteConfigFile(String fileName) {
+        File destinationFile = new File(CONFIG_DIR_LOCATION + fileName);
+        return destinationFile.delete();
     }
 
 

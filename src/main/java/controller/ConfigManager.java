@@ -14,8 +14,9 @@ public class ConfigManager {
         Statement st;
         try {
             st = jdbcConnection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM pg_settings WHERE source <> 'client' AND context <> 'internal';");
+            ResultSet rs = st.executeQuery("SELECT * FROM pg_settings WHERE (source != 'session' AND context != 'internal');");
             while (rs.next()) {
+                //System.out.println(rs.getString("name") + ", " + rs.getString("source"));
                 String name = rs.getString("name");
                 String setting = rs.getString("setting");
                 String unit = rs.getString("unit");

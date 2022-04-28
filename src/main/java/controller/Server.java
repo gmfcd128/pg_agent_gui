@@ -172,8 +172,8 @@ public class Server {
         }
         while (!testDBConnectivity()) {
             try {
-                jdbcConnection = DriverManager.getConnection("jdbc:postgresql://140.124.183.60:5432/raritan", "ntutstudent", "Lab438!");
-                System.out.println("Connected to the PostgreSQL server successfully.");
+                jdbcConnection = DriverManager.getConnection("jdbc:postgresql://" + loginCredential.getIp() + ":5432/" +
+                        loginCredential.getDatabase(), loginCredential.getPostgresUsername(), loginCredential.getPostgresPassword());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

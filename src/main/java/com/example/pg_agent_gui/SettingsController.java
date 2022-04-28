@@ -38,6 +38,9 @@ public class SettingsController {
     }
 
     @FXML
+    private Button deleteLocalConfigButton;
+
+    @FXML
     private GridPane localConfigGridPane;
 
     @FXML
@@ -61,7 +64,6 @@ public class SettingsController {
         configManager = new ConfigManager();
         showServerConfig();
         reloadConfigDropdown();
-        //localConfigComboBox.getSelectionModel().select(0);
     }
 
     private void showServerConfig() {
@@ -123,7 +125,7 @@ public class SettingsController {
 
     private void highlightConfigDiff(PGConfigDelta configDelta, ComboBox<String> comboBox) {
         String selected = comboBox.getSelectionModel().getSelectedItem();
-        String key = localConfig.get( GridPane.getRowIndex(comboBox)).getName();
+        String key = localConfig.get(GridPane.getRowIndex(comboBox)).getName();
         for (int j = 0; j < serverConfig.size(); j++) {
             if (serverConfig.get(j).getName().equals(key)) {
                 if (serverConfig.get(j).getValue().equals(selected)) {
@@ -246,6 +248,20 @@ public class SettingsController {
         }
     }
 
+    @FXML
+    void onDeleteLocalConfigButtonClicked(MouseEvent event) {
+        if (localConfigComboBox.getItems().size() > 0) {
+            String selectedConfig = localConfigComboBox.getValue().getName();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "你確定要刪除" + selectedConfig + "嗎?", ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.YES) {
+                LocalStorage.getInstance().deleteConfigFile(selectedConfig);
+                reloadConfigDropdown();
+            }
+
+        }
+    }
+
 
     @FXML
     void onDownloadButtonClick(MouseEvent event) {
@@ -253,6 +269,16 @@ public class SettingsController {
         td.setHeaderText("輸入檔案名稱");
         td.showAndWait();
         String fileName = td.getEditor().getText();
+        if (LocalStorage.getInstance().configFileExists(fileName)) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "檔案名稱已存在，是否覆寫?", ButtonType.YES, ButtonType.NO);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.NO) {
+                LocalStorage.getInstance().saveConfigLocally(fileName + "(new)", serverConfig);
+                reloadConfigDropdown();
+                return;
+            }
+        }
+
         LocalStorage.getInstance().saveConfigLocally(fileName, serverConfig);
         reloadConfigDropdown();
     }

@@ -73,7 +73,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </ComboBox>
-                  <Button mnemonicParsing="false" text="刪除">
+                  <Button fx:id="deleteLocalConfigButton" mnemonicParsing="false" onMouseClicked="#onDeleteLocalConfigButtonClicked" text="刪除">
                      <font>
                         <Font size="13.0" />
                      </font>
