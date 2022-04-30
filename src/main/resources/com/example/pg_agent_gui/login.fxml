@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="592.0" spacing="20.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="592.0" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -162,7 +162,7 @@
                   <HBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </HBox.margin></Button>
-               <Button fx:id="buttonDelete" alignment="CENTER_RIGHT" mnemonicParsing="false" onMouseClicked="#onDeleteButtonCLicked" text="刪除" HBox.hgrow="NEVER">
+               <Button fx:id="buttonDelete" alignment="CENTER_RIGHT" disable="true" mnemonicParsing="false" onMouseClicked="#onDeleteButtonCLicked" text="刪除" HBox.hgrow="NEVER">
                   <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </padding>

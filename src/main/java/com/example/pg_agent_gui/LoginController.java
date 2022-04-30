@@ -22,43 +22,32 @@ public class LoginController {
     private int currentSelectedServer;
     private boolean unsavedEdit;
     private Stage stage;
+    @FXML
+    private ListView<LoginCredential> serverListView;
+    @FXML
+    private Button buttonAdd;
+    @FXML
+    private Button buttonDelete;
+    @FXML
+    private Button buttonLogin;
+    @FXML
+    private TextField databaseNameTextField;
+    @FXML
+    private TextField postgresPasswordTextField;
+    @FXML
+    private TextField postgresUsernameTextField;
+    @FXML
+    private TextField serverIPTextField;
+    @FXML
+    private TextField serverNameTextField;
+    @FXML
+    private TextField sshPasswordTextField;
+    @FXML
+    private TextField sshUsernameTextField;
+
     public LoginController(Stage stage) {
         this.stage = stage;
     }
-
-
-    @FXML
-    private ListView<LoginCredential> serverListView;
-
-    @FXML
-    private Button buttonAdd;
-
-    @FXML
-    private Button buttonDelete;
-
-    @FXML
-    private Button buttonLogin;
-
-    @FXML
-    private TextField databaseNameTextField;
-
-    @FXML
-    private TextField postgresPasswordTextField;
-
-    @FXML
-    private TextField postgresUsernameTextField;
-
-    @FXML
-    private TextField serverIPTextField;
-
-    @FXML
-    private TextField serverNameTextField;
-
-    @FXML
-    private TextField sshPasswordTextField;
-
-    @FXML
-    private TextField sshUsernameTextField;
 
     public void initialize() {
         unsavedEdit = false;
@@ -69,6 +58,9 @@ public class LoginController {
 
             @Override
             public void changed(ObservableValue<? extends LoginCredential> observable, LoginCredential oldValue, LoginCredential newValue) {
+                if (buttonDelete.isDisabled()) {
+                    buttonDelete.setDisable(false);
+                }
                 // Your action here
                 if (unsavedEdit) {
                     Alert unsavedEditAlert = new Alert(Alert.AlertType.CONFIRMATION, "是否將登入資訊變更儲存?", ButtonType.YES, ButtonType.NO);
@@ -90,7 +82,8 @@ public class LoginController {
                     sshPasswordTextField.setText(newValue.getSshPassword());
                     postgresUsernameTextField.setText(newValue.getPostgresUsername());
                     postgresPasswordTextField.setText(newValue.getPostgresPassword());
-                    currentSelectedServer = serverListView.getSelectionModel().getSelectedIndex();;
+                    currentSelectedServer = serverListView.getSelectionModel().getSelectedIndex();
+                    ;
                 }
 
             }
@@ -111,10 +104,10 @@ public class LoginController {
 
     @FXML
     void onAddButtonClicked(MouseEvent event) {
-         serverList.add(new LoginCredential("New server","","","","","",""));
-         serverListView.getSelectionModel().select(serverList.size());
-         buttonAdd.setDisable(true);
-         unsavedEdit = true;
+        serverList.add(new LoginCredential("New server", "", "", "", "", "", ""));
+        serverListView.getSelectionModel().select(serverList.size());
+        buttonAdd.setDisable(true);
+        unsavedEdit = true;
     }
 
     @FXML

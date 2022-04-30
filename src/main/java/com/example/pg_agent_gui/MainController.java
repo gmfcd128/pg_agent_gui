@@ -14,23 +14,21 @@ import java.io.IOException;
 public class MainController {
     private Stage stage;
     private Server server;
+    @FXML
+    private Label serverNameLabel;
+    @FXML
+    private Button settingsButton;
+    @FXML
+    private Button testButton;
+
     public MainController(Stage stage, Server server) {
         this.stage = stage;
         this.server = server;
     }
 
-    @FXML
-    private Label serverNameLabel;
-
     public void initialize() {
         serverNameLabel.setText(this.server.getName());
     }
-
-    @FXML
-    private Button settingsButton;
-
-    @FXML
-    private Button testButton;
 
     @FXML
     void onSettingsButtonClicked(MouseEvent event) {
@@ -49,7 +47,6 @@ public class MainController {
             e.printStackTrace();
         }
     }
-
 
 
 }

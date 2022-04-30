@@ -8,12 +8,10 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="639.0" prefWidth="899.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="639.0" prefWidth="899.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox layoutX="117.0" layoutY="120.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -22,18 +20,18 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <font>
-                  <Font size="18.0" />
+                  <Font name="System Bold" size="21.0" />
                </font>
             </Label>
             <HBox prefWidth="200.0">
                <children>
-                  <ComboBox prefHeight="23.0" prefWidth="250.0" />
-                  <Button mnemonicParsing="false" text="新增">
+                  <ComboBox fx:id="testPlanComboBox" prefHeight="23.0" prefWidth="250.0" />
+                  <Button fx:id="newPlanButton" mnemonicParsing="false" onMouseClicked="#onNewPlanButtonClicked" text="新增">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" text="儲存">
+                  <Button fx:id="savePlanButton" mnemonicParsing="false" onMouseClicked="#onSavePlanButtonClicked" text="儲存">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
@@ -55,7 +53,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Spinner>
+                  <Spinner fx:id="executionCountSpinner" editable="true">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -65,7 +63,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Spinner>
+                  <Spinner fx:id="threadCountSpinner" editable="true">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -85,11 +83,18 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox prefWidth="150.0">
+                  <ComboBox fx:id="localConfigComboBox" prefWidth="150.0">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </ComboBox>
+                  <Label text="SQL指令檔案位置:" />
+                  <Label fx:id="sqlDirectoryLabel" text="(null)">
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Button fx:id="selectSQLDirectoryButton" mnemonicParsing="false" onMouseClicked="#onSelectDirectoryButtonClicked" text="選擇" />
                </children>
                <padding>
                   <Insets left="10.0" right="10.0" />
@@ -102,12 +107,12 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox prefWidth="150.0">
+                  <ComboBox fx:id="availableDeltaComboBox" prefWidth="150.0">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </ComboBox>
-                  <Button mnemonicParsing="false" text="添加" />
+                  <Button fx:id="addSectionButton" mnemonicParsing="false" onMouseClicked="#onAddSectionButtonClicked" text="添加" />
                </children>
                <padding>
                   <Insets left="10.0" right="10.0" />
@@ -115,14 +120,14 @@
             </HBox>
             <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <content>
-                  <Pane fx:id="configDeltaPanel" />
+                  <VBox fx:id="configSectionVBox" prefHeight="200.0" prefWidth="100.0" />
                </content>
             </ScrollPane>
          </children>
       </VBox>
       <Button mnemonicParsing="false" text="RUN" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
          <font>
-            <Font size="53.0" />
+            <Font size="39.0" />
          </font>
       </Button>
    </children>

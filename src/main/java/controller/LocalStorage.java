@@ -2,6 +2,7 @@ package controller;
 
 import model.LoginCredential;
 import model.PGConfigDelta;
+import model.TestPlan;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 public class LocalStorage {
     private String CREDENTIALS_FILE_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "credentials.ser";
     private String CONFIG_DIR_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "config_files" + File.separator;
+    private String TEST_PLAN_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "test_plans" + File.separator;
 
     private LocalStorage() {
     }
@@ -40,9 +42,8 @@ public class LocalStorage {
         try {
             File file = new File(CREDENTIALS_FILE_LOCATION);
             if (!file.exists()) {
-                file.mkdir();
-                // If you require it to make the entire directory path including parents,
-                // use directory.mkdirs(); here instead.
+                file.getParentFile().mkdir();
+                file.createNewFile();
             }
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -62,7 +63,7 @@ public class LocalStorage {
         return configDirectory.listFiles();
     }
 
-    public List<PGConfigDelta> getConfigurationFromFile(File file) {
+    public List<PGConfigDelta> getConfigDeltaFromFile(File file) {
         List<PGConfigDelta> resultList = new ArrayList<>();
         try {
             FileInputStream fileInputStream = new FileInputStream(CONFIG_DIR_LOCATION + file.getName());
@@ -75,21 +76,20 @@ public class LocalStorage {
         return resultList;
     }
 
-    public boolean saveConfigLocally(String fileName, List<PGConfigDelta> deltaList) {
+    public boolean saveConfigFile(String fileName, List<PGConfigDelta> deltaList) {
         File directory = new File(CONFIG_DIR_LOCATION);
         File destinationFile = new File(CONFIG_DIR_LOCATION + fileName);
         if (!directory.exists()) {
             directory.mkdir();
         }
-        try{
+        try {
             FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(deltaList);
             objectOutputStream.close();
             fileOutputStream.close();
             return true;
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -100,9 +100,55 @@ public class LocalStorage {
         return destinationFile.exists();
     }
 
+    public boolean planFileExists(String fileName) {
+        File destinationFile = new File(TEST_PLAN_LOCATION + fileName);
+        return destinationFile.exists();
+    }
+
+
+
     public boolean deleteConfigFile(String fileName) {
         File destinationFile = new File(CONFIG_DIR_LOCATION + fileName);
         return destinationFile.delete();
+    }
+
+    public File[] getTestPlans() {
+        File testPlanDirectory = new File(TEST_PLAN_LOCATION);
+        if (!testPlanDirectory.exists()) {
+            testPlanDirectory.mkdirs();
+        }
+        return testPlanDirectory.listFiles();
+    }
+
+    public boolean saveTestPlan(String fileName, TestPlan testPlan) {
+        File directory = new File(TEST_PLAN_LOCATION);
+        File destinationFile = new File(TEST_PLAN_LOCATION + fileName);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(testPlan);
+            objectOutputStream.close();
+            fileOutputStream.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public TestPlan getTestPlanFromFile(File file) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(TEST_PLAN_LOCATION + file.getName());
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            TestPlan result = (TestPlan) objectInputStream.readObject();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

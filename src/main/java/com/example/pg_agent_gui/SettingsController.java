@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -17,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import model.PGConfigDelta;
 import model.ValueType;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -92,7 +90,7 @@ public class SettingsController {
         localConfigComboBox.setConverter(converter);
         localConfigComboBox.setItems(localConfigFiles);
         localConfigComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            localConfig = LocalStorage.getInstance().getConfigurationFromFile(newVal);
+            localConfig = LocalStorage.getInstance().getConfigDeltaFromFile(newVal);
             populateLocalGridPane();
         });
     }
@@ -273,13 +271,13 @@ public class SettingsController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "檔案名稱已存在，是否覆寫?", ButtonType.YES, ButtonType.NO);
             alert.showAndWait();
             if (alert.getResult() == ButtonType.NO) {
-                LocalStorage.getInstance().saveConfigLocally(fileName + "(new)", serverConfig);
+                LocalStorage.getInstance().saveConfigFile(fileName + "(new)", serverConfig);
                 reloadConfigDropdown();
                 return;
             }
         }
 
-        LocalStorage.getInstance().saveConfigLocally(fileName, serverConfig);
+        LocalStorage.getInstance().saveConfigFile(fileName, serverConfig);
         reloadConfigDropdown();
     }
 

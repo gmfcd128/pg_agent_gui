@@ -39,9 +39,9 @@ public class ViewFactory {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("database_config.fxml"));
         fxmlLoader.setController(new SettingsController(stage, server));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 854);
-        stage.setMinWidth(800);
-        stage.setMinHeight(854);
+        Scene scene = new Scene(fxmlLoader.load(), 700, 754);
+        stage.setMinWidth(700);
+        stage.setMinHeight(754);
         stage.setTitle("Postgres auto experiment GUI - 設定管理");
         stage.setScene(scene);
         stage.show();
@@ -50,7 +50,7 @@ public class ViewFactory {
     public static void showTestPlanWindow(Server server) throws IOException {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("testplan.fxml"));
-        fxmlLoader.setController(new TestPlanController());
+        fxmlLoader.setController(new TestPlanController(stage));
         Scene scene = new Scene(fxmlLoader.load(), 899, 639);
         stage.setMinWidth(899);
         stage.setMinHeight(639);
