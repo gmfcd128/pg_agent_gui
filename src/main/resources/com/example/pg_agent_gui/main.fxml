@@ -27,7 +27,7 @@
                   <Insets bottom="5.0" top="5.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" text="效能評測">
+            <Button fx:id="testButton" mnemonicParsing="false" onMouseClicked="#onTestButtonCLicked" text="效能評測">
                <font>
                   <Font size="28.0" />
                </font>

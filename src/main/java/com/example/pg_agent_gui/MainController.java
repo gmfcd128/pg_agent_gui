@@ -30,9 +30,21 @@ public class MainController {
     private Button settingsButton;
 
     @FXML
+    private Button testButton;
+
+    @FXML
     void onSettingsButtonClicked(MouseEvent event) {
         try {
             ViewFactory.showSettingsWindow(server);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void onTestButtonCLicked(MouseEvent event) {
+        try {
+            ViewFactory.showTestPlanWindow(server);
         } catch (IOException e) {
             e.printStackTrace();
         }
