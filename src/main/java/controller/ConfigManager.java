@@ -42,7 +42,24 @@ public class ConfigManager {
         return result;
     }
 
-    public void uploadToServer(Server server) {
+    public List<PGConfigDelta> compareLocalDifference(Server server, List<PGConfigDelta> config) {
+        List<PGConfigDelta> serverConfig = downloadFromServer(server);
+        List<PGConfigDelta> difference = new ArrayList<>();
+        for (PGConfigDelta configDelta : config) {
+            for (PGConfigDelta serverConfigDelta : serverConfig) {
+                if (serverConfigDelta.getName().equals(configDelta.getName()) && !serverConfigDelta.getValue().equals(configDelta.getValue())) {
+                    difference.add(configDelta);
+                }
+            }
+        }
+        return difference;
+    }
 
+    public void uploadToServer(Server server, List<PGConfigDelta> localConfig) throws PGErrorException {
+        List<PGConfigDelta> localDifference = compareLocalDifference(server, localConfig);
+        for (PGConfigDelta configDelta : localDifference) {
+            server.applyPGConfigDelta(configDelta);
+        }
+        server.restartPostgres();
     }
 }

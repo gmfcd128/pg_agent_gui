@@ -154,6 +154,7 @@ public class TestPlanController {
         localConfigComboBox.setItems(localConfigFiles);
         localConfigComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
             availableConfigDeltas = LocalStorage.getInstance().getConfigDeltaFromFile(newVal);
+
             loadConfigDeltaDropdown();
         });
     }
@@ -190,6 +191,12 @@ public class TestPlanController {
         configSectionVBox.getChildren().clear();
         threadCountSpinner.getValueFactory().setValue(currentTestPlan.getNumberOfThreads());
         executionCountSpinner.getValueFactory().setValue(currentTestPlan.getNumberOfRuns());
+        for(int i = 0;i < localTestPlans.size(); i++) {
+            if (localConfigFiles.get(i).getName().equals(currentTestPlan.getBaseConfigName())) {
+                localConfigComboBox.getSelectionModel().select(i);
+            }
+        }
+
         sqlDirectoryLabel.setText(currentTestPlan.getPayloadDirectory());
         for (Map.Entry<PGConfigDelta, List<String>> entry : currentTestPlan.getValues().entrySet()) {
             appendConfigSection(entry.getKey(), entry.getValue());
@@ -277,13 +284,13 @@ public class TestPlanController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "檔案名稱已存在，是否覆寫?", ButtonType.YES, ButtonType.NO);
             alert.showAndWait();
             if (alert.getResult() == ButtonType.NO) {
-                currentTestPlan = new TestPlan(fileName, 1, 1, null, new HashMap<>());
+                currentTestPlan = new TestPlan(fileName, 1, 1);
                 LocalStorage.getInstance().saveTestPlan(fileName + "(new)", currentTestPlan);
                 reloadConfigDropdown();
                 return;
             }
         }
-        currentTestPlan = new TestPlan(fileName, 1, 1, null, new HashMap<>());
+        currentTestPlan = new TestPlan(fileName, 1, 1);
         LocalStorage.getInstance().saveTestPlan(fileName, currentTestPlan);
         reloadConfigDropdown();
     }
@@ -292,6 +299,7 @@ public class TestPlanController {
     void onSavePlanButtonClicked(MouseEvent event) {
         currentTestPlan.setNumberOfRuns(executionCountSpinner.getValue());
         currentTestPlan.setNumberOfThreads(threadCountSpinner.getValue());
+        currentTestPlan.setBaseConfigName(localConfigComboBox.getSelectionModel().getSelectedItem().getName());
         HashMap<PGConfigDelta, List<String>> data = new HashMap<>();
         for (Map.Entry<PGConfigDelta, VBox> entry : configSectionMap.entrySet()) {
             List<String> settingsValues = new ArrayList<>();

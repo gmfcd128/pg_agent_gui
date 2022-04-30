@@ -34,11 +34,36 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
+// this is required due to JMeter open issue: https://bz.apache.org/bugzilla/show_bug.cgi?id=64465
+@CacheableRule
+class JmeterRule implements ComponentMetadataRule {
+    void execute(ComponentMetadataContext context) {
+        context.details.allVariants {
+            withDependencies {
+                removeAll { it.group == "org.apache.jmeter" && it.name == "bom" }
+            }
+        }
+    }
+}
+
 dependencies {
+    components.all(JmeterRule)
+    implementation 'us.abstracta.jmeter:jmeter-java-dsl:0.54'
+    implementation 'us.abstracta.jmeter:jmeter-java-dsl-jdbc:0.54'
     implementation 'org.postgresql:postgresql:42.3.4'
     implementation 'com.jcraft:jsch:0.1.55'
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    components {
+        withModule("org.apache.jmeter:ApacheJMeter_core", JmeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_java", JmeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter", JmeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_http", JmeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_functions", JmeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_components", JmeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_config", JmeterRule)
+        withModule("org.apache.jmeter:jorphan", JmeterRule)
+    }
 }
 
 extraJavaModuleInfo {

@@ -15,9 +15,12 @@ public class Server {
     private LoginCredential loginCredential;
     private Connection jdbcConnection;
     private Session sshSession;
-
     public Server(LoginCredential loginCredential) {
         this.loginCredential = loginCredential;
+    }
+
+    public LoginCredential getLoginCredential() {
+        return loginCredential;
     }
 
     public void createConnections() throws SQLException, JSchException {

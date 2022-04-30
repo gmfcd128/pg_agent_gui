@@ -9,13 +9,23 @@ public class TestPlan implements Serializable {
     private int numberOfThreads;
     private int numberOfRuns;
     private String payloadDirectory;
+    private String baseConfigName;
     private HashMap<PGConfigDelta, List<String>> values;
-    public TestPlan(String name, int numberOfRuns, int numberOfThreads, String payloadDirectory, HashMap<PGConfigDelta, List<String>> values) {
+
+    public TestPlan(String name, int numberOfRuns, int numberOfThreads) {
         this.name = name;
         this.numberOfThreads = numberOfThreads;
         this.numberOfRuns = numberOfRuns;
         this.payloadDirectory = "";
-        this.values = values;
+        this.values = new HashMap<>();
+    }
+
+    public String getBaseConfigName() {
+        return baseConfigName;
+    }
+
+    public void setBaseConfigName(String baseConfigName) {
+        this.baseConfigName = baseConfigName;
     }
 
     public int getNumberOfThreads() {
@@ -34,12 +44,12 @@ public class TestPlan implements Serializable {
         this.numberOfRuns = numberOfRuns;
     }
 
-    public void setPayloadDirectory(String payloadDirectory) {
-        this.payloadDirectory = payloadDirectory;
-    }
-
     public String getPayloadDirectory() {
         return payloadDirectory;
+    }
+
+    public void setPayloadDirectory(String payloadDirectory) {
+        this.payloadDirectory = payloadDirectory;
     }
 
     public HashMap<PGConfigDelta, List<String>> getValues() {
