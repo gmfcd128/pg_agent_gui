@@ -1,5 +1,9 @@
 package controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import model.PGConfigDelta;
 import model.TestPlan;
 
@@ -27,7 +31,17 @@ public class TestSession {
         this.configCombinations = createCombinations(configDeltaList);
         for (List<PGConfigDelta> combination : configCombinations) {
             for (int i = 1; i <= testPlan.getNumberOfRuns(); i++) {
-                SQLTestRunner testRunner = new SQLTestRunner("",testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns());
+                Map<String, String> sqlToRun = testPlan.getSQLCommands();
+                for (int j = 0; j < sqlToRun.size(); j++) {
+                    SQLTestRunner testRunner = new SQLTestRunner("",testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns());
+                    testRunner.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                        @Override
+                        public void handle(WorkerStateEvent event) {
+
+                        }
+                    });
+                    new Thread(testRunner).start();
+                }
 
             }
         }

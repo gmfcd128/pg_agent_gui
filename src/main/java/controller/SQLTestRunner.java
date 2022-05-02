@@ -29,7 +29,8 @@ public class SQLTestRunner extends Task<Void> {
         this.loginCredential = loginCredential;
     }
 
-    public void fuck() {
+    @Override
+    protected Void call() throws Exception {
         System.out.println("SQL test triggered.");
         try {
             TestPlanStats stats = testPlan(
@@ -46,11 +47,6 @@ public class SQLTestRunner extends Task<Void> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-    @Override
-    protected Void call() throws Exception {
         return null;
     }
 
