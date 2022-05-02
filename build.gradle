@@ -50,7 +50,7 @@ dependencies {
     components.all(JmeterRule)
     implementation 'us.abstracta.jmeter:jmeter-java-dsl:0.54'
     implementation 'us.abstracta.jmeter:jmeter-java-dsl-jdbc:0.54'
-    implementation 'org.postgresql:postgresql:42.3.4'
+    implementation 'org.postgresql:postgresql:42.3.1'
     implementation 'com.jcraft:jsch:0.1.55'
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
@@ -69,6 +69,12 @@ dependencies {
 extraJavaModuleInfo {
     module("jsch-0.1.55.jar", "com.jcraft.jsch", "0.1.55") {
         exports("com.jcraft.jsch")
+    }
+    module("jmeter-java-dsl-0.54.jar", "us.abstracta.jmeter.javadsl", "0.54") {
+        exports("us.abstracta.jmeter.javadsl")
+    }
+    module("jmeter-java-dsl-jdbc-0.54.jar", "us.abstracta.jmeter.javadsl.jdbc", "0.54") {
+        exports("us.abstracta.jmeter.javadsl.jdbc")
     }
 }
 

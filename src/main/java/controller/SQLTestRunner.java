@@ -6,12 +6,19 @@ import model.LoginCredential;
 import java.io.IOException;
 import java.sql.Driver;
 import java.time.Duration;
-import static us.abstracta.jmeter.javadsl.JmeterDsl.*;
+
+import us.abstracta.jmeter.javadsl.core.TestPlanStats;
+
+import static us.abstracta.jmeter.javadsl.JmeterDsl.testPlan;
+import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcConnectionPool;
+import static us.abstracta.jmeter.javadsl.JmeterDsl.threadGroup;
+import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcSampler;
+
 
 public class SQLTestRunner extends Task<Void> {
-    private String query;
-    private int numberOfThreads;
-    private int numberOfRuns;
+    String query;
+    int numberOfThreads;
+    int numberOfRuns;
     private LoginCredential loginCredential;
 
     public SQLTestRunner(String query, int numberOfThreads, int numberOfRuns, LoginCredential loginCredential) {
@@ -26,18 +33,20 @@ public class SQLTestRunner extends Task<Void> {
     protected Void call() throws Exception {
         System.out.println("SQL test triggered.");
         try {
+
             TestPlanStats stats = testPlan(
                     jdbcConnectionPool("jdbcPool", Driver.class, "jdbc:postgresql://140.124.183.60:5432/raritan")
                             .user("ntutstudent")
                             .password("Lab438!"),
                     threadGroup(this.numberOfThreads, this.numberOfRuns,
                             jdbcSampler("SQL command", "jdbcPool",
-                                    this.query)
+                                    "SELECT id FROM products WHERE name=?")
                                     .timeout(Duration.ofSeconds(60))
                     )
+
             ).run();
             if (stats.overall().errorsCount() > 0) {
-                return false;
+
             }
         } catch (IOException e) {
             e.printStackTrace();
