@@ -20,37 +20,38 @@ public class SQLTestRunner extends Task<Void> {
     int numberOfThreads;
     int numberOfRuns;
     private LoginCredential loginCredential;
+    TestPlanStats stats;
 
-    public SQLTestRunner(String query, int numberOfThreads, int numberOfRuns, LoginCredential loginCredential) {
+    public SQLTestRunner(String query, int numberOfThreads, int numberOfRuns) {
         this.query = query;
         this.numberOfThreads = numberOfThreads;
         this.numberOfRuns = numberOfRuns;
         this.loginCredential = loginCredential;
     }
 
-
-    @Override
-    protected Void call() throws Exception {
+    public void fuck() {
         System.out.println("SQL test triggered.");
         try {
-
             TestPlanStats stats = testPlan(
-                    jdbcConnectionPool("jdbcPool", Driver.class, "jdbc:postgresql://140.124.183.60:5432/raritan")
-                            .user("ntutstudent")
-                            .password("Lab438!"),
+                    jdbcConnectionPool("jdbcPool", Driver.class, "jdbc:postgresql://" + loginCredential.getIp() + ":5432/" + loginCredential.getDatabase())
+                            .user(loginCredential.getPostgresUsername())
+                            .password(loginCredential.getPostgresPassword()),
                     threadGroup(this.numberOfThreads, this.numberOfRuns,
                             jdbcSampler("SQL command", "jdbcPool",
-                                    "SELECT id FROM products WHERE name=?")
-                                    .timeout(Duration.ofSeconds(60))
+                                    this.query)
+                                    .timeout(Duration.ofSeconds(100))
                     )
-
             ).run();
-            if (stats.overall().errorsCount() > 0) {
 
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Override
+    protected Void call() throws Exception {
         return null;
     }
+
 }

@@ -1,37 +1,18 @@
 plugins {
-    id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
-    id 'org.beryx.jlink' version '2.24.1'
-    id 'de.jjohannes.extra-java-module-info' version '0.11'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
-
-group 'com.example'
-version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
-
-ext {
-    junitVersion = '5.8.2'
-}
-
-sourceCompatibility = '11'
-targetCompatibility = '11'
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-application {
-    mainModule = 'com.example.pg_agent_gui'
-    mainClass = 'com.example.pg_agent_gui.HelloApplication'
-}
-
 javafx {
     version = '11.0.2'
     modules = ['javafx.controls', 'javafx.fxml']
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 // this is required due to JMeter open issue: https://bz.apache.org/bugzilla/show_bug.cgi?id=64465
@@ -48,12 +29,10 @@ class JmeterRule implements ComponentMetadataRule {
 
 dependencies {
     components.all(JmeterRule)
-    implementation 'us.abstracta.jmeter:jmeter-java-dsl:0.54'
-    implementation 'us.abstracta.jmeter:jmeter-java-dsl-jdbc:0.54'
+    implementation 'us.abstracta.jmeter:jmeter-java-dsl:0.49'
+    implementation 'us.abstracta.jmeter:jmeter-java-dsl-jdbc:0.49'
     implementation 'org.postgresql:postgresql:42.3.1'
     implementation 'com.jcraft:jsch:0.1.55'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     components {
         withModule("org.apache.jmeter:ApacheJMeter_core", JmeterRule)
         withModule("org.apache.jmeter:ApacheJMeter_java", JmeterRule)
@@ -66,30 +45,53 @@ dependencies {
     }
 }
 
-extraJavaModuleInfo {
+/*extraJavaModuleInfo {
     module("jsch-0.1.55.jar", "com.jcraft.jsch", "0.1.55") {
         exports("com.jcraft.jsch")
     }
-    module("jmeter-java-dsl-0.54.jar", "us.abstracta.jmeter.javadsl", "0.54") {
+    module("jmeter-java-dsl-0.49.jar", "us.abstracta.jmeter.javadsl", "0.49") {
         exports("us.abstracta.jmeter.javadsl")
     }
-    module("jmeter-java-dsl-jdbc-0.54.jar", "us.abstracta.jmeter.javadsl.jdbc", "0.54") {
+    module("jmeter-java-dsl-jdbc-0.49.jar", "us.abstracta.jmeter.javadsl.jdbc", "0.49") {
         exports("us.abstracta.jmeter.javadsl.jdbc")
     }
-}
-
-test {
-    useJUnitPlatform()
-}
-
-jlink {
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher {
-        name = 'app'
+    module("ApacheJMeter_http-5.4.3.jar", "org.apache.jmeter.protocol.http", "5.4.3") {
+        exports("org.apache.jmeter.protocol.http")
     }
-}
+    module("ApacheJMeter_functions-5.4.3.jar", "org.apache.jmeter.functions", "5.4.3") {
+        exports("org.apache.jmeter.functions")
+    }
+    module("jmeter-plugins-random-csv-data-set-0.8.jar", "jmeter-plugins-random-csv-data-set", "0.8") {
+        exports("com.blazemeter.csv")
+        exports("com.blazemeter.jmeter")
+    }
+    module("ApacheJMeter_components-5.4.3.jar", "ApacheJMeter_components", "5.4.3")
+    module("ApacheJMeter_config-5.4.3.jar", "ApacheJMeter_config", "5.4.3")
+    module("ApacheJMeter_java-5.4.3.jar", "org.apache.jmeter.protocol.java", "5.4.3") {
+        exports("org.apache.jmeter.protocol.java")
+    }
+    module("jmeter-plugins-casutg-2.10.jar", "jmeter-plugins-casutg", "2.10")
+    module("jmeter-plugins-tst-2.5.jar", "kg.apc.jmeter.timers", "2.5") {
+        exports("kg.apc.jmeter.timers")
+    }
+    module("jmeter-plugins-dummy-0.4.jar", "jmeter-plugins-dummy", "0.4")
+    module("commons-math3-3.6.1.jar", "commons-math3", "3.6.1") {
+        exports("org.apache.commons.math3")
+    }
+    module("ApacheJMeter_jdbc-5.4.3.jar", "org.apache.jmeter.protocol.jdbc", "5.4.3") {
+        exports("org.apache.jmeter.protocol.jdbc")
+    }
+    module("jmeter-plugins-cmn-jmeter-0.6.jar", "jmeter-plugins-cmn-jmeter", "0.6")
+    module("jmeter-plugins-charts-0.1.jar", "jmeter-plugins-charts", "0.1")
+    module("ApacheJMeter_core-5.4.3.jar", "org.apache.jmeter", "5.4.3") {
+        exports("org.apache.jmeter")
+    }
+    module("xstream-1.4.15.jar", "xstream", "1.4.15")
+    module("bsh-2.0b6.jar", "bsh", "2.0b6") {
+        exports("bsh")
+    }
 
-jlinkZip {
-    group = 'distribution'
-}
+}*/
+
+
+mainClassName = 'com.example.pg_agent_gui.Application'

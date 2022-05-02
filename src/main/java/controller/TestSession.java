@@ -8,6 +8,7 @@ import java.util.*;
 public class TestSession {
     private TestPlan testPlan;
     private Set<List<PGConfigDelta>> configCombinations;
+    private Server server;
 
     public TestSession(TestPlan testPlan) {
         this.testPlan = testPlan;
@@ -26,7 +27,7 @@ public class TestSession {
         this.configCombinations = createCombinations(configDeltaList);
         for (List<PGConfigDelta> combination : configCombinations) {
             for (int i = 1; i <= testPlan.getNumberOfRuns(); i++) {
-                SQLTestRunner
+                SQLTestRunner testRunner = new SQLTestRunner("",testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns());
 
             }
         }
