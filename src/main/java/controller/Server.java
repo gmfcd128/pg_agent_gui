@@ -164,7 +164,6 @@ public class Server {
             System.out.println("Error occured when adjusting PG setting: " + result);
             throw new PGErrorException(result);
         }
-        System.out.println("fuck");
     }
 
     public void restartPostgres() {
@@ -181,6 +180,23 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public double getTotalQueryTime() {
+        double sqlTimeTotal = -1.0D;
+        Statement st;
+        try {
+            st = jdbcConnection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT SUM(total_time) FROM pg_stat_statements;");
+            while (rs.next()) {
+                System.out.print("Column 1 returned ");
+                sqlTimeTotal = rs.getDouble(1);
+                System.out.println(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sqlTimeTotal;
     }
 }
 

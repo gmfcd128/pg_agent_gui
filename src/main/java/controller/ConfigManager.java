@@ -21,15 +21,14 @@ public class ConfigManager {
                 String setting = rs.getString("setting");
                 String unit = rs.getString("unit");
                 String varType = rs.getString("vartype");
+                int minValue = rs.getInt("min_val");
+                long maxValue = Long.valueOf(rs.getString("max_val"));
+                Array a = rs.getArray("enumvals");
                 PGConfigDelta configDelta = new PGConfigDelta(name, setting, unit, varType);
                 if (varType.equals("integer") || varType.equals("real")) {
-                    int minValue = rs.getInt("min_val");
-                    //String test = rs.getString("max_val");
-                    long maxValue = Long.valueOf(rs.getString("max_val")).longValue();
                     configDelta.setRange(minValue, maxValue);
                 }
                 if (varType.equals("enum")) {
-                    Array a = rs.getArray("enumvals");
                     String[] options = (String[])a.getArray();
                     configDelta.setOptions(options);
                 }

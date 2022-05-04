@@ -102,8 +102,8 @@ public class LoginController {
     }
 
 
-    @FXML
-    void onAddButtonClicked(MouseEvent event) {
+
+    void onAddButtonClicked() {
         serverList.add(new LoginCredential("New server", "", "", "", "", "", ""));
         serverListView.getSelectionModel().select(serverList.size());
         buttonAdd.setDisable(true);

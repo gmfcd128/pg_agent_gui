@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -78,6 +79,7 @@ public class ConfigManagerTest {
 
         Mockito.when(statement.executeQuery("SELECT * FROM pg_settings WHERE (source != 'session' AND context != 'internal');")).thenReturn(resultSet);
         Mockito.when(jdbcConnection.createStatement()).thenReturn(statement);
+        //Mockito.when(jdbcConnection.createArrayOf("string",  new String[]{"always","on", "off"})).thenCallRealMethod();
         Mockito.when(server.getJdbcConnection()).thenReturn(jdbcConnection);
     }
 
@@ -106,11 +108,21 @@ public class ConfigManagerTest {
         assertEquals(0, configuration.get(3).getAllowedMin());
         assertEquals(600, configuration.get(0).getAllowedMax());
         assertEquals(100, configuration.get(3).getAllowedMax());
-
     }
 
     @Test
     public void compareLocalDifference() {
+        PGConfigDelta element1 = new PGConfigDelta("authentication_timeout", "60", "s", "integer");
+        PGConfigDelta element2 = new PGConfigDelta("array_nulls", "off", null, "bool");
+        PGConfigDelta element3 = new PGConfigDelta("archive_command", "(disabled)", null, "string");
+        PGConfigDelta element4 = new PGConfigDelta("autovacuum_analyze_scale_factor", "0.05", null, "real");
+        List<PGConfigDelta> localConfig = List.of(element1, element2, element3, element4);
+        ConfigManager configManager = new ConfigManager();
+        List<PGConfigDelta> result = configManager.compareLocalDifference(server, localConfig);
+        assertEquals(1, result.size());
+        assertEquals("array_nulls", result.get(0).getName());
+        assertEquals("off", result.get(0).getValue());
+
     }
 
     @Test

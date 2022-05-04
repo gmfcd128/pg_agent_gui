@@ -1,11 +1,10 @@
 package controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import model.PGConfigDelta;
 import model.TestPlan;
+import model.TestResult;
 
 import java.util.*;
 
@@ -14,7 +13,9 @@ public class TestSession {
     private Set<List<PGConfigDelta>> configCombinations;
     private Server server;
 
-    public TestSession(TestPlan testPlan) {
+    private List<TestResult> testResults;
+
+    public TestSession(TestPlan testPlan, Server server) {
         this.testPlan = testPlan;
         Map<PGConfigDelta, List<String>> configData = this.testPlan.getValues();
         List<List<PGConfigDelta>> configDeltaList = new ArrayList<>();
@@ -27,17 +28,22 @@ public class TestSession {
             }
             configDeltaList.add(subList);
         }
-
         this.configCombinations = createCombinations(configDeltaList);
+        this.testResults = new ArrayList<>();
+    }
+
+    public void run() {
         for (List<PGConfigDelta> combination : configCombinations) {
             for (int i = 1; i <= testPlan.getNumberOfRuns(); i++) {
                 Map<String, String> sqlToRun = testPlan.getSQLCommands();
-                for (int j = 0; j < sqlToRun.size(); j++) {
-                    SQLTestRunner testRunner = new SQLTestRunner("",testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns());
+                for (Map.Entry<String, String> test : sqlToRun.entrySet()) {
+                    SQLTestRunner testRunner = new SQLTestRunner("",testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns(), server.getLoginCredential());
+                    int finalI = i;
                     testRunner.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                         @Override
                         public void handle(WorkerStateEvent event) {
-
+                            double totalQueryTime = server.getTotalQueryTime();
+                            testResults.add(new TestResult(test.getKey(), finalI, totalQueryTime));
                         }
                     });
                     new Thread(testRunner).start();

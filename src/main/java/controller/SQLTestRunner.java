@@ -20,9 +20,8 @@ public class SQLTestRunner extends Task<Void> {
     int numberOfThreads;
     int numberOfRuns;
     private LoginCredential loginCredential;
-    TestPlanStats stats;
 
-    public SQLTestRunner(String query, int numberOfThreads, int numberOfRuns) {
+    public SQLTestRunner(String query, int numberOfThreads, int numberOfRuns, LoginCredential loginCredential) {
         this.query = query;
         this.numberOfThreads = numberOfThreads;
         this.numberOfRuns = numberOfRuns;
