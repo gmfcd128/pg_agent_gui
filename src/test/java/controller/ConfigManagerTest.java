@@ -77,7 +77,8 @@ public class ConfigManagerTest {
                 .thenReturn(null);
 
 
-        Mockito.when(statement.executeQuery("SELECT * FROM pg_settings WHERE (source != 'session' AND context != 'internal');")).thenReturn(resultSet);
+        Mockito.when(statement.executeQuery("SELECT * FROM pg_settings WHERE (source != 'session' AND context != 'internal');"))
+                .thenReturn(resultSet);
         Mockito.when(jdbcConnection.createStatement()).thenReturn(statement);
         //Mockito.when(jdbcConnection.createArrayOf("string",  new String[]{"always","on", "off"})).thenCallRealMethod();
         Mockito.when(server.getJdbcConnection()).thenReturn(jdbcConnection);
