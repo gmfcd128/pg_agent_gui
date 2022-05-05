@@ -290,13 +290,11 @@ public class SettingsController {
     @FXML
     void onUploadButtonClicked(MouseEvent event) {
         ArrayList<PGConfigDelta> failedToApply = new ArrayList<>();
-        for (PGConfigDelta configDelta : localConfig) {
-            if (configDelta.isModified()) {
-                try {
-                    server.applyPGConfigDelta(configDelta);
-                } catch (PGErrorException e) {
-                    failedToApply.add(configDelta);
-                }
+        for (PGConfigDelta configDelta : configManager.compareLocalDifference(server, localConfig)) {
+            try {
+                server.applyPGConfigDelta(configDelta);
+            } catch (PGErrorException e) {
+                failedToApply.add(configDelta);
             }
         }
         Alert alert;
@@ -315,6 +313,7 @@ public class SettingsController {
         server.restartPostgres();
         showServerConfig();
         populateLocalGridPane();
+        populateServerGridPane();
     }
 
 

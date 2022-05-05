@@ -191,7 +191,7 @@ public class TestPlanController {
         configSectionVBox.getChildren().clear();
         threadCountSpinner.getValueFactory().setValue(currentTestPlan.getNumberOfThreads());
         executionCountSpinner.getValueFactory().setValue(currentTestPlan.getNumberOfRuns());
-        for(int i = 0;i < localTestPlans.size(); i++) {
+        for(int i = 0;i < localConfigFiles.size(); i++) {
             if (localConfigFiles.get(i).getName().equals(currentTestPlan.getBaseConfigName())) {
                 localConfigComboBox.getSelectionModel().select(i);
             }
