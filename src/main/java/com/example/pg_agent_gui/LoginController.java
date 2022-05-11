@@ -33,7 +33,7 @@ public class LoginController {
     @FXML
     private TextField databaseNameTextField;
     @FXML
-    private TextField postgresPasswordTextField;
+    private PasswordField postgresPasswordField;
     @FXML
     private TextField postgresUsernameTextField;
     @FXML
@@ -41,7 +41,7 @@ public class LoginController {
     @FXML
     private TextField serverNameTextField;
     @FXML
-    private TextField sshPasswordTextField;
+    private PasswordField sshPasswordField;
     @FXML
     private TextField sshUsernameTextField;
 
@@ -79,9 +79,9 @@ public class LoginController {
                     serverIPTextField.setText(newValue.getIp());
                     databaseNameTextField.setText(newValue.getDatabase());
                     sshUsernameTextField.setText(newValue.getSshUsername());
-                    sshPasswordTextField.setText(newValue.getSshPassword());
+                    sshPasswordField.setText(newValue.getSshPassword());
                     postgresUsernameTextField.setText(newValue.getPostgresUsername());
-                    postgresPasswordTextField.setText(newValue.getPostgresPassword());
+                    postgresPasswordField.setText(newValue.getPostgresPassword());
                     currentSelectedServer = serverListView.getSelectionModel().getSelectedIndex();
                     ;
                 }
@@ -95,9 +95,9 @@ public class LoginController {
         serverList.get(currentSelectedServer).setIp(serverIPTextField.getText());
         serverList.get(currentSelectedServer).setDatabase(databaseNameTextField.getText());
         serverList.get(currentSelectedServer).setSshUsername(sshUsernameTextField.getText());
-        serverList.get(currentSelectedServer).setSshPassword(sshPasswordTextField.getText());
+        serverList.get(currentSelectedServer).setSshPassword(sshPasswordField.getText());
         serverList.get(currentSelectedServer).setPostgresUsername(postgresUsernameTextField.getText());
-        serverList.get(currentSelectedServer).setPostgresPassword(postgresPasswordTextField.getText());
+        serverList.get(currentSelectedServer).setPostgresPassword(postgresPasswordField.getText());
         serverListView.refresh();
     }
 

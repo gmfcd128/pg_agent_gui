@@ -77,13 +77,18 @@ public class PGConfigDelta implements Serializable, Cloneable{
     }
 
     public void updateValue(String value) {
+        if (value.equals(this.value)) {
+            return;
+        }
         if (this.valueType == ValueType.STRING || this.valueType == ValueType.BOOL || this.valueType == ValueType.ENUM) {
             this.value = value;
         } else if (this.valueType == ValueType.INTEGER) {
             try {
                 int test = Integer.parseInt(value);
-                if (allowedMin < test && test < allowedMax) {
+                if (allowedMin <= test && test <= allowedMax) {
                     this.value = value;
+                } else {
+                    return;
                 }
             } catch (Exception e) {
                 return;
@@ -91,8 +96,10 @@ public class PGConfigDelta implements Serializable, Cloneable{
         } else if (this.valueType == ValueType.REAL) {
             try {
                 double test = Double.parseDouble(value);
-                if (allowedMin < test && test < allowedMax) {
+                if (allowedMin <= test && test <= allowedMax) {
                     this.value = value;
+                } else {
+                    return;
                 }
             } catch (Exception e) {
                 return;

@@ -208,7 +208,7 @@ public class SettingsController {
                 TextField textField = new TextField();
                 textField.setText(configDelta.getValue());
 
-                textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     String key = localConfig.get(GridPane.getRowIndex(textField)).getName();
                     for (int j = 0; j < serverConfig.size(); j++) {
                         if (serverConfig.get(j).getName().equals(key)) {
@@ -218,6 +218,12 @@ public class SettingsController {
                                 textField.setStyle("-fx-control-inner-background: red");
                             }
                             configDelta.updateValue(textField.getText());
+                            if (!configDelta.isModified() && !textField.getText().equals(configDelta.getValue())) {
+                                Alert alert = new Alert(Alert.AlertType.WARNING, "Invalid input value.", ButtonType.OK);
+                                alert.showAndWait();
+                                textField.setText(configDelta.getValue());
+                                textField.setStyle("");
+                            }
                         }
                     }
 
@@ -284,13 +290,11 @@ public class SettingsController {
     @FXML
     void onUploadButtonClicked(MouseEvent event) {
         ArrayList<PGConfigDelta> failedToApply = new ArrayList<>();
-        for (PGConfigDelta configDelta : localConfig) {
-            if (configDelta.isModified()) {
-                try {
-                    server.applyPGConfigDelta(configDelta);
-                } catch (PGErrorException e) {
-                    failedToApply.add(configDelta);
-                }
+        for (PGConfigDelta configDelta : configManager.compareLocalDifference(server, localConfig)) {
+            try {
+                server.applyPGConfigDelta(configDelta);
+            } catch (PGErrorException e) {
+                failedToApply.add(configDelta);
             }
         }
         Alert alert;
@@ -309,6 +313,7 @@ public class SettingsController {
         server.restartPostgres();
         showServerConfig();
         populateLocalGridPane();
+        populateServerGridPane();
     }
 
 
