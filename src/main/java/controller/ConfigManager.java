@@ -24,7 +24,7 @@ public class ConfigManager {
                 PGConfigDelta configDelta = new PGConfigDelta(name, setting, unit, varType);
                 if (varType.equals("integer") || varType.equals("real")) {
                     int minValue = rs.getInt("min_val");
-                    //String test = rs.getString("max_val");
+                    String test = rs.getString("max_val");
                     long maxValue = Long.valueOf(rs.getString("max_val")).longValue();
                     configDelta.setRange(minValue, maxValue);
                 }

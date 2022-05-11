@@ -11,43 +11,33 @@ import java.util.*;
 
 public class TestSession {
     private TestPlan testPlan;
-    private Set<List<PGConfigDelta>> configCombinations;
+
     private Server server;
+    private List<List<PGConfigDelta>> configDeltaList;
 
     public TestSession(TestPlan testPlan) {
         this.testPlan = testPlan;
         Map<PGConfigDelta, List<String>> configData = this.testPlan.getValues();
-        List<List<PGConfigDelta>> configDeltaList = new ArrayList<>();
+        configDeltaList = new ArrayList<>();
         for (Map.Entry<PGConfigDelta, List<String>> entry : configData.entrySet()) {
             List<PGConfigDelta> subList = new ArrayList<>();
             for (String value : entry.getValue()) {
-                PGConfigDelta configDelta = entry.getKey();
+                PGConfigDelta configDelta = null;
+                try {
+                    configDelta = (PGConfigDelta) entry.getKey().clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
                 configDelta.updateValue(value);
                 subList.add(configDelta);
             }
             configDeltaList.add(subList);
         }
 
-        this.configCombinations = createCombinations(configDeltaList);
-        for (List<PGConfigDelta> combination : configCombinations) {
-            for (int i = 1; i <= testPlan.getNumberOfRuns(); i++) {
-                Map<String, String> sqlToRun = testPlan.getSQLCommands();
-                for (int j = 0; j < sqlToRun.size(); j++) {
-                    SQLTestRunner testRunner = new SQLTestRunner("",testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns());
-                    testRunner.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                        @Override
-                        public void handle(WorkerStateEvent event) {
 
-                        }
-                    });
-                    new Thread(testRunner).start();
-                }
-
-            }
-        }
     }
 
-    private Set<List<PGConfigDelta>> createCombinations(List<List<PGConfigDelta>> configDeltaLists) {
+    public Set<List<PGConfigDelta>> createCombinations() {
         Set<List<PGConfigDelta>> combinations = new HashSet<List<PGConfigDelta>>();
         Set<List<PGConfigDelta>> newCombinations;
 
@@ -55,14 +45,14 @@ public class TestSession {
 
         // extract each of the integers in the first list
         // and add each to ints as a new list
-        for (PGConfigDelta i : configDeltaLists.get(0)) {
+        for (PGConfigDelta i : configDeltaList.get(0)) {
             List<PGConfigDelta> newList = new ArrayList<PGConfigDelta>();
             newList.add(i);
             combinations.add(newList);
         }
         index++;
-        while (index < configDeltaLists.size()) {
-            List<PGConfigDelta> nextList = configDeltaLists.get(index);
+        while (index < configDeltaList.size()) {
+            List<PGConfigDelta> nextList = configDeltaList.get(index);
             newCombinations = new HashSet<List<PGConfigDelta>>();
             for (List<PGConfigDelta> first : combinations) {
                 for (PGConfigDelta second : nextList) {
@@ -76,5 +66,9 @@ public class TestSession {
             index++;
         }
         return combinations;
+    }
+
+    public TestPlan getTestPlan() {
+        return this.testPlan;
     }
 }

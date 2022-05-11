@@ -2,7 +2,7 @@ package model;
 
 import java.io.Serializable;
 
-public class PGConfigDelta implements Serializable {
+public class PGConfigDelta implements Serializable, Cloneable{
     private String name;
     private String value;
     private String unit;
@@ -100,6 +100,13 @@ public class PGConfigDelta implements Serializable {
         }
         modified = true;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        // TODO: Your custom clone logic
+        return super.clone();
+    }
+
 
 
 }

@@ -4,6 +4,7 @@ import controller.Server;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.TestPlan;
 
 import java.io.IOException;
 
@@ -50,10 +51,22 @@ public class ViewFactory {
     public static void showTestPlanWindow(Server server) throws IOException {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("testplan.fxml"));
-        fxmlLoader.setController(new TestPlanController(stage));
+        fxmlLoader.setController(new TestPlanController(stage, server));
         Scene scene = new Scene(fxmlLoader.load(), 899, 639);
         stage.setMinWidth(899);
         stage.setMinHeight(639);
+        stage.setTitle("Postgres auto experiment GUI - 設定管理");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void showTestRunnerWindow(TestPlan testPlan, Server server) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("testrun.fxml"));
+        fxmlLoader.setController(new TestExecController(stage, testPlan, server));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        stage.setMinWidth(600);
+        stage.setMinHeight(400);
         stage.setTitle("Postgres auto experiment GUI - 設定管理");
         stage.setScene(scene);
         stage.show();

@@ -1,6 +1,7 @@
 package com.example.pg_agent_gui;
 
 import controller.LocalStorage;
+import controller.Server;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +24,7 @@ import model.PGConfigDelta;
 import model.TestPlan;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.*;
@@ -30,6 +32,7 @@ import java.util.function.UnaryOperator;
 
 public class TestPlanController {
     private Stage stage;
+    private Server server;
     private List<PGConfigDelta> availableConfigDeltas;
     private HashMap<PGConfigDelta, VBox> configSectionMap;
     private ObservableList<File> localConfigFiles;
@@ -39,6 +42,8 @@ public class TestPlanController {
     private ComboBox<File> testPlanComboBox;
     @FXML
     private Button newPlanButton;
+    @FXML
+    private Button runButton;
 
     @FXML
     private Button savePlanButton;
@@ -60,8 +65,9 @@ public class TestPlanController {
     @FXML
     private Button selectSQLDirectoryButton;
 
-    public TestPlanController(Stage stage) {
+    public TestPlanController(Stage stage, Server server) {
         this.stage = stage;
+        this.server = server;
     }
 
     public void initialize() {
@@ -335,6 +341,15 @@ public class TestPlanController {
             currentTestPlan.setPayloadDirectory(selectedDirectory.getAbsolutePath());
         }
 
+    }
+
+    @FXML
+    void onRunButtonCLicked(MouseEvent event) {
+        try {
+            ViewFactory.showTestRunnerWindow(currentTestPlan, server);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

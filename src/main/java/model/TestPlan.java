@@ -55,7 +55,7 @@ public class TestPlan implements Serializable {
         return payloadDirectory;
     }
 
-    public Map<String, String> getSQLCommands() {
+    public Map<String, String> getSQLCommands() throws IOException {
         HashMap<String, String> result = new HashMap<>();
         File f = new File(this.getPayloadDirectory());
 
@@ -69,17 +69,14 @@ public class TestPlan implements Serializable {
         File[] files = f.listFiles(textFilter);
         System.out.println("SQL files to run:");
         for (File file : files) {
-            try {
-                System.out.println(file.getCanonicalPath());
-                byte[] encoded = Files.readAllBytes(Paths.get(file.getCanonicalPath()));
-                String command = new String(encoded, Charset.defaultCharset());
-                String testcase = file.getName();
-                if (!result.containsKey(testcase)) {
-                    result.put(testcase, command);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            System.out.println(file.getCanonicalPath());
+            byte[] encoded = Files.readAllBytes(Paths.get(file.getCanonicalPath()));
+            String command = new String(encoded, Charset.defaultCharset());
+            String testcase = file.getName();
+            if (!result.containsKey(testcase)) {
+                result.put(testcase, command);
             }
+
         }
         return result;
     }

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="639.0" prefWidth="899.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="639.0" prefWidth="899.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox layoutX="117.0" layoutY="120.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -125,7 +125,7 @@
             </ScrollPane>
          </children>
       </VBox>
-      <Button mnemonicParsing="false" text="RUN" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
+      <Button fx:id="runButton" mnemonicParsing="false" onMouseClicked="#onRunButtonCLicked" text="RUN" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
          <font>
             <Font size="39.0" />
          </font>

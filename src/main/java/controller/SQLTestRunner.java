@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.Driver;
 import java.time.Duration;
 
+import model.TestResult;
 import us.abstracta.jmeter.javadsl.core.TestPlanStats;
 
 import static us.abstracta.jmeter.javadsl.JmeterDsl.testPlan;
@@ -15,14 +16,15 @@ import static us.abstracta.jmeter.javadsl.JmeterDsl.threadGroup;
 import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcSampler;
 
 
-public class SQLTestRunner extends Task<Void> {
-    String query;
-    int numberOfThreads;
-    int numberOfRuns;
+public class SQLTestRunner extends Task<TestResult> {
+    private String name;
+    private String query;
+    private int numberOfThreads;
+    private int numberOfRuns;
     private LoginCredential loginCredential;
     TestPlanStats stats;
 
-    public SQLTestRunner(String query, int numberOfThreads, int numberOfRuns) {
+    public SQLTestRunner(String name, String query, int numberOfThreads, int numberOfRuns) {
         this.query = query;
         this.numberOfThreads = numberOfThreads;
         this.numberOfRuns = numberOfRuns;
@@ -30,9 +32,12 @@ public class SQLTestRunner extends Task<Void> {
     }
 
     @Override
-    protected Void call() throws Exception {
-        System.out.println("SQL test triggered.");
-        try {
+    protected TestResult call() throws Exception {
+        TestResult returnVal;
+        System.out.println("MOCK");
+        Thread.sleep(1000);
+        returnVal = new TestResult("mock", 1.0, true);
+        /*try {
             TestPlanStats stats = testPlan(
                     jdbcConnectionPool("jdbcPool", Driver.class, "jdbc:postgresql://" + loginCredential.getIp() + ":5432/" + loginCredential.getDatabase())
                             .user(loginCredential.getPostgresUsername())
@@ -46,8 +51,8 @@ public class SQLTestRunner extends Task<Void> {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        return null;
+        }*/
+        return returnVal;
     }
 
 }
