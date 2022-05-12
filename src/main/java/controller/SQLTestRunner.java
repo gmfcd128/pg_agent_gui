@@ -8,6 +8,7 @@ import java.sql.Driver;
 import java.time.Duration;
 
 import model.TestResult;
+import org.apache.xpath.operations.Bool;
 import us.abstracta.jmeter.javadsl.core.TestPlanStats;
 
 import static us.abstracta.jmeter.javadsl.JmeterDsl.testPlan;
@@ -16,7 +17,7 @@ import static us.abstracta.jmeter.javadsl.JmeterDsl.threadGroup;
 import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcSampler;
 
 
-public class SQLTestRunner extends Task<TestResult> {
+public class SQLTestRunner extends Task<Boolean> {
     private String name;
     private String query;
     private int numberOfThreads;
@@ -32,11 +33,11 @@ public class SQLTestRunner extends Task<TestResult> {
     }
 
     @Override
-    protected TestResult call() throws Exception {
+    protected Boolean call() throws Exception {
         TestResult returnVal;
         System.out.println("MOCK");
         Thread.sleep(1000);
-        returnVal = new TestResult("mock", 1.0, true);
+
         /*try {
             TestPlanStats stats = testPlan(
                     jdbcConnectionPool("jdbcPool", Driver.class, "jdbc:postgresql://" + loginCredential.getIp() + ":5432/" + loginCredential.getDatabase())
@@ -48,11 +49,16 @@ public class SQLTestRunner extends Task<TestResult> {
                                     .timeout(Duration.ofSeconds(100))
                     )
             ).run();
+            if (stats.overall().errorsCount() > 0) {
+                return false;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
-        return returnVal;
+        }
+
+        */
+        return true;
     }
 
 }

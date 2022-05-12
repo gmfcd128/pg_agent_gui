@@ -5,8 +5,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import model.PGConfigDelta;
+import model.Report;
 import model.TestPlan;
+import model.TestResult;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 public class TestSession {
@@ -70,5 +76,18 @@ public class TestSession {
 
     public TestPlan getTestPlan() {
         return this.testPlan;
+    }
+
+    public void makeReport(Report report, File file) {
+        try {
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+            Files.write(file.toPath(), report.generateHTML().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

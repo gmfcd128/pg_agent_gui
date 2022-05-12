@@ -12,6 +12,11 @@ public class PGConfigDelta implements Serializable, Cloneable{
     private long allowedMax;
     private boolean modified;
 
+    @Override
+    public boolean equals(Object obj) {
+        return this.name.equals(((PGConfigDelta)obj).name) && this.value.equals(((PGConfigDelta)obj).value);
+    }
+
     public PGConfigDelta(String name, String value, String unit, String valueType) {
         this.name = name;
         this.value = value;
