@@ -1,5 +1,6 @@
 package com.example.pg_agent_gui;
 
+import com.thoughtworks.xstream.mapper.Mapper;
 import controller.LocalStorage;
 import controller.Server;
 import javafx.collections.FXCollections;
@@ -305,7 +306,12 @@ public class TestPlanController {
     void onSavePlanButtonClicked(MouseEvent event) {
         currentTestPlan.setNumberOfRuns(executionCountSpinner.getValue());
         currentTestPlan.setNumberOfThreads(threadCountSpinner.getValue());
-        currentTestPlan.setBaseConfigName(localConfigComboBox.getSelectionModel().getSelectedItem().getName());
+        try {
+            currentTestPlan.setBaseConfigName(localConfigComboBox.getSelectionModel().getSelectedItem().getName());
+        } catch (NullPointerException e) {
+            currentTestPlan.setBaseConfigName(null);
+        }
+
         HashMap<PGConfigDelta, List<String>> data = new HashMap<>();
         for (Map.Entry<PGConfigDelta, VBox> entry : configSectionMap.entrySet()) {
             List<String> settingsValues = new ArrayList<>();

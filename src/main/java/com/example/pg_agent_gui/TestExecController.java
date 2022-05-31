@@ -84,7 +84,8 @@ public class TestExecController {
         for (Map.Entry<String, String> entry : sqlToRun.entrySet()) {
             for (List<PGConfigDelta> combination : configCombinations) {
                 for (int i = 1; i <= testPlan.getNumberOfRuns(); i++) {
-                    SQLTestRunner testRunner = new SQLTestRunner("", "", testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns());
+                    SQLTestRunner testRunner = new SQLTestRunner(entry.getKey(), entry.getValue(), testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns(), server.getLoginCredential());
+                    //SQLTestRunner testRunner = new SQLTestRunner(entry.getKey(), entry.getValue(), testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns(), server.getLoginCredential());
                     testRunner.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                         @Override
                         public void handle(WorkerStateEvent event) {
@@ -132,6 +133,8 @@ public class TestExecController {
                 testSession.makeReport(report, file);
             }
         }
+        stopButton.setText("已完成");
+        stopButton.setDisable(true);
     }
 
     @FXML

@@ -25,7 +25,7 @@ public class SQLTestRunner extends Task<Boolean> {
     private LoginCredential loginCredential;
     TestPlanStats stats;
 
-    public SQLTestRunner(String name, String query, int numberOfThreads, int numberOfRuns) {
+    public SQLTestRunner(String name, String query, int numberOfThreads, int numberOfRuns, LoginCredential loginCredential) {
         this.query = query;
         this.numberOfThreads = numberOfThreads;
         this.numberOfRuns = numberOfRuns;
@@ -38,7 +38,7 @@ public class SQLTestRunner extends Task<Boolean> {
         System.out.println("MOCK");
         Thread.sleep(1000);
 
-        /*try {
+        try {
             TestPlanStats stats = testPlan(
                     jdbcConnectionPool("jdbcPool", Driver.class, "jdbc:postgresql://" + loginCredential.getIp() + ":5432/" + loginCredential.getDatabase())
                             .user(loginCredential.getPostgresUsername())
@@ -57,7 +57,7 @@ public class SQLTestRunner extends Task<Boolean> {
             e.printStackTrace();
         }
 
-        */
+
         return true;
     }
 
