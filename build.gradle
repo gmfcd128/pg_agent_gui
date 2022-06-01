@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.3.1'
     implementation 'com.jcraft:jsch:0.1.55'
     implementation 'junit:junit:4.13.1'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.6'
     testImplementation 'org.mockito:mockito-core:4.5.1'
     components {
         withModule("org.apache.jmeter:ApacheJMeter_core", JmeterRule)

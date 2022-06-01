@@ -71,4 +71,16 @@ public class ViewFactory {
         stage.setScene(scene);
         stage.show();
     }
+
+    public static void showLogSearchWindow() throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("logsearch.fxml"));
+        fxmlLoader.setController(new LogSearchController(stage));
+        Scene scene = new Scene(fxmlLoader.load(), 977, 678);
+        stage.setMinWidth(977);
+        stage.setMinHeight(678);
+        stage.setTitle("Postgres auto experiment GUI - 記錄檔查詢工具");
+        stage.setScene(scene);
+        stage.show();
+    }
 }

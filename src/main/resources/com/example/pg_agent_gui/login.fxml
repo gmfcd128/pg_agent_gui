@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="592.0" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="587.0" prefWidth="592.0" spacing="20.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -20,7 +21,7 @@
      <items>
        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
             <children>
-               <ListView fx:id="serverListView" layoutX="-19.0" layoutY="24.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               <ListView fx:id="connectionProfileListView" layoutX="-19.0" layoutY="24.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
          </AnchorPane>
        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -119,7 +120,7 @@
                                  <Font size="14.0" />
                               </font>
                            </Label>
-                           <TextField fx:id="postgresUsernameTextField" HBox.hgrow="ALWAYS">
+                           <TextField fx:id="postgresUsernameField" HBox.hgrow="ALWAYS">
                               <HBox.margin>
                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                               </HBox.margin>
@@ -146,6 +147,33 @@
                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </padding>
                      </HBox>
+                     <Separator prefWidth="200.0" />
+                     <Label text="重新啟動Postgres指令">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </Label>
+                     <TextField fx:id="postgresRestartCommandField" text="systemctl restart postgresql-14">
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </TextField>
+                     <Label text="取得pg_stat_statement總執行時間">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </Label>
+                     <TextField fx:id="sqlTotalTimeCommandField" text="SELECT SUM(total_plan_time) + SUM(total_exec_time) FROM pg_stat_statements;">
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </TextField>
                   </children>
                </VBox>
             </children>
@@ -174,6 +202,11 @@
                   <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </padding>
+                  <HBox.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </HBox.margin>
+               </Button>
+               <Button fx:id="logSearchButton" mnemonicParsing="false" onMouseClicked="#onLogSearchButtonClicked" text="記錄檔搜尋工具">
                   <HBox.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </HBox.margin>

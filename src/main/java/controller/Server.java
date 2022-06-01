@@ -1,8 +1,10 @@
 package controller;
 
 import com.jcraft.jsch.*;
+import model.ConnectionProfile;
 import model.LoginCredential;
 import model.PGConfigDelta;
+import model.ServerImplementation;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +15,13 @@ import java.util.regex.Pattern;
 
 public class Server {
     private LoginCredential loginCredential;
+
+    private ServerImplementation serverImplementation;
     private Connection jdbcConnection;
     private Session sshSession;
-    public Server(LoginCredential loginCredential) {
-        this.loginCredential = loginCredential;
+    public Server(ConnectionProfile connectionProfile) {
+        this.loginCredential = connectionProfile.getLoginCredential();
+        this.serverImplementation = connectionProfile.getServerImplementation();
     }
 
     public LoginCredential getLoginCredential() {
@@ -168,7 +173,7 @@ public class Server {
 
     public void restartPostgres() {
         String result;
-        result = executeCommandWithSudo("systemctl restart postgresql.service");
+        result = executeCommandWithSudo(this.serverImplementation.getPostgresRestartCommand());
         if (!result.equals("")) {
             System.out.println("Error occured when restart PG: " + result);
         }
@@ -187,7 +192,7 @@ public class Server {
         Statement st;
         try {
             st = jdbcConnection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT SUM(total_time) FROM pg_stat_statements;");
+            ResultSet rs = st.executeQuery(this.serverImplementation.getTotalSqlTimeCommand());
             while (rs.next()) {
                 System.out.print("Column 1 returned ");
                 sqlTimeTotal = rs.getDouble(1);

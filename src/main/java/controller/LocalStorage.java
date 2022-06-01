@@ -1,5 +1,6 @@
 package controller;
 
+import model.ConnectionProfile;
 import model.LoginCredential;
 import model.PGConfigDelta;
 import model.TestPlan;
@@ -10,6 +11,8 @@ import java.util.List;
 
 public class LocalStorage {
     private String CREDENTIALS_FILE_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "credentials.ser";
+
+    private String CONNECTION_PROFILE_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "connectionProfiles.ser";
     private String CONFIG_DIR_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "config_files" + File.separator;
     private String TEST_PLAN_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "test_plans" + File.separator;
 
@@ -25,12 +28,12 @@ public class LocalStorage {
         return instance;
     }
 
-    public List<LoginCredential> getLoginCredentials() {
-        List<LoginCredential> resultList = new ArrayList<>();
+    public List<ConnectionProfile> getConnectionProfiles() {
+        List<ConnectionProfile> resultList = new ArrayList<>();
         try {
-            FileInputStream fileInputStream = new FileInputStream(CREDENTIALS_FILE_LOCATION);
+            FileInputStream fileInputStream = new FileInputStream(CONNECTION_PROFILE_LOCATION);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            List<LoginCredential> persistedList = (List<LoginCredential>) objectInputStream.readObject();
+            List<ConnectionProfile> persistedList = (List<ConnectionProfile>) objectInputStream.readObject();
             resultList.addAll(persistedList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,9 +41,9 @@ public class LocalStorage {
         return resultList;
     }
 
-    public void saveLoginCredentials(List<LoginCredential> credentialList) {
+    public void saveConnectionProfiles(List<ConnectionProfile> credentialList) {
         try {
-            File file = new File(CREDENTIALS_FILE_LOCATION);
+            File file = new File(CONNECTION_PROFILE_LOCATION);
             if (!file.exists()) {
                 file.getParentFile().mkdir();
                 file.createNewFile();

@@ -11,8 +11,7 @@ public class LoginCredential implements Serializable {
     private String serverName;
     private String ip;
 
-    public LoginCredential(String serverName, String ip, String database, String sshUsername, String sshPassword, String postgresUsername, String postgresPassword) {
-        this.serverName = serverName;
+    public LoginCredential(String ip, String database, String sshUsername, String sshPassword, String postgresUsername, String postgresPassword) {
         this.ip = ip;
         this.database = database;
         this.sshUsername = sshUsername;

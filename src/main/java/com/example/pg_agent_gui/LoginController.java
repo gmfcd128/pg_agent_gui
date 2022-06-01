@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import model.ConnectionProfile;
 import model.LoginCredential;
 
 import java.io.IOException;
@@ -18,12 +19,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class LoginController {
-    private ObservableList<LoginCredential> serverList;
-    private int currentSelectedServer;
+    private ObservableList<ConnectionProfile> connectionProfileList;
+    private int currentSelectedProfile;
     private boolean unsavedEdit;
     private Stage stage;
     @FXML
-    private ListView<LoginCredential> serverListView;
+    private ListView<ConnectionProfile> connectionProfileListView;
     @FXML
     private Button buttonAdd;
     @FXML
@@ -35,7 +36,7 @@ public class LoginController {
     @FXML
     private PasswordField postgresPasswordField;
     @FXML
-    private TextField postgresUsernameTextField;
+    private TextField postgresUsernameField;
     @FXML
     private TextField serverIPTextField;
     @FXML
@@ -45,19 +46,25 @@ public class LoginController {
     @FXML
     private TextField sshUsernameTextField;
 
+    @FXML
+    private TextField postgresRestartCommandField;
+
+    @FXML
+    private TextField sqlTotalTimeCommandField;
+
     public LoginController(Stage stage) {
         this.stage = stage;
     }
 
     public void initialize() {
         unsavedEdit = false;
-        serverList = FXCollections.observableArrayList();
-        serverList.addAll(LocalStorage.getInstance().getLoginCredentials());
-        serverListView.setItems(serverList);
-        serverListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<LoginCredential>() {
+        connectionProfileList = FXCollections.observableArrayList();
+        connectionProfileList.addAll(LocalStorage.getInstance().getConnectionProfiles());
+        connectionProfileListView.setItems(connectionProfileList);
+        connectionProfileListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ConnectionProfile>() {
 
             @Override
-            public void changed(ObservableValue<? extends LoginCredential> observable, LoginCredential oldValue, LoginCredential newValue) {
+            public void changed(ObservableValue<? extends ConnectionProfile> observable, ConnectionProfile oldValue, ConnectionProfile newValue) {
                 if (buttonDelete.isDisabled()) {
                     buttonDelete.setDisable(false);
                 }
@@ -67,45 +74,46 @@ public class LoginController {
                     unsavedEditAlert.showAndWait();
                     if (unsavedEditAlert.getResult() == ButtonType.YES) {
                         updateSelectedServer();
-                        LocalStorage.getInstance().saveLoginCredentials(new ArrayList<LoginCredential>(serverList));
+                        LocalStorage.getInstance().saveConnectionProfiles(new ArrayList<ConnectionProfile>(connectionProfileList));
                     } else if (unsavedEditAlert.getResult() == ButtonType.NO) {
-                        serverList.remove(serverList.size() - 1);
-                        serverListView.getSelectionModel().select(serverList.size() - 1);
+                        connectionProfileList.remove(connectionProfileList.size() - 1);
+                        connectionProfileListView.getSelectionModel().select(connectionProfileList.size() - 1);
                     }
                     buttonAdd.setDisable(false);
                     unsavedEdit = false;
                 } else {
-                    serverNameTextField.setText(newValue.getServerName());
-                    serverIPTextField.setText(newValue.getIp());
-                    databaseNameTextField.setText(newValue.getDatabase());
-                    sshUsernameTextField.setText(newValue.getSshUsername());
-                    sshPasswordField.setText(newValue.getSshPassword());
-                    postgresUsernameTextField.setText(newValue.getPostgresUsername());
-                    postgresPasswordField.setText(newValue.getPostgresPassword());
-                    currentSelectedServer = serverListView.getSelectionModel().getSelectedIndex();
-                    ;
+                    serverNameTextField.setText(newValue.getLoginCredential().getServerName());
+                    serverIPTextField.setText(newValue.getLoginCredential().getIp());
+                    databaseNameTextField.setText(newValue.getLoginCredential().getDatabase());
+                    sshUsernameTextField.setText(newValue.getLoginCredential().getSshUsername());
+                    sshPasswordField.setText(newValue.getLoginCredential().getSshPassword());
+                    postgresUsernameField.setText(newValue.getLoginCredential().getPostgresUsername());
+                    postgresPasswordField.setText(newValue.getLoginCredential().getPostgresPassword());
+                    postgresRestartCommandField.setText(newValue.getServerImplementation().getPostgresRestartCommand());
+                    sqlTotalTimeCommandField.setText(newValue.getServerImplementation().getTotalSqlTimeCommand());
+                    currentSelectedProfile = connectionProfileListView.getSelectionModel().getSelectedIndex();
                 }
-
             }
+
         });
     }
 
     private void updateSelectedServer() {
-        serverList.get(currentSelectedServer).setServerName(serverNameTextField.getText());
-        serverList.get(currentSelectedServer).setIp(serverIPTextField.getText());
-        serverList.get(currentSelectedServer).setDatabase(databaseNameTextField.getText());
-        serverList.get(currentSelectedServer).setSshUsername(sshUsernameTextField.getText());
-        serverList.get(currentSelectedServer).setSshPassword(sshPasswordField.getText());
-        serverList.get(currentSelectedServer).setPostgresUsername(postgresUsernameTextField.getText());
-        serverList.get(currentSelectedServer).setPostgresPassword(postgresPasswordField.getText());
-        serverListView.refresh();
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setServerName(serverNameTextField.getText());
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setIp(serverIPTextField.getText());
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setDatabase(databaseNameTextField.getText());
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setSshUsername(sshUsernameTextField.getText());
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setSshPassword(sshPasswordField.getText());
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setPostgresUsername(postgresUsernameField.getText());
+        connectionProfileList.get(currentSelectedProfile).getLoginCredential().setPostgresPassword(postgresPasswordField.getText());
+        connectionProfileListView.refresh();
     }
 
 
     @FXML
     void onAddButtonClicked(MouseEvent event) {
-        serverList.add(new LoginCredential("New server", "", "", "", "", "", ""));
-        serverListView.getSelectionModel().select(serverList.size());
+        connectionProfileList.add(new ConnectionProfile("New Server"));
+        connectionProfileListView.getSelectionModel().select(connectionProfileList.size());
         buttonAdd.setDisable(true);
         unsavedEdit = true;
     }
@@ -113,25 +121,25 @@ public class LoginController {
     @FXML
     void onSaveButtonClicked(MouseEvent event) {
         updateSelectedServer();
-        LocalStorage.getInstance().saveLoginCredentials(new ArrayList<LoginCredential>(serverList));
+        LocalStorage.getInstance().saveConnectionProfiles(new ArrayList<ConnectionProfile>(connectionProfileList));
         buttonAdd.setDisable(false);
     }
 
     @FXML
     void onDeleteButtonCLicked(MouseEvent event) {
-        Alert unsavedEditAlert = new Alert(Alert.AlertType.CONFIRMATION, "真的要刪除" + serverList.get(currentSelectedServer) + "嗎?", ButtonType.YES, ButtonType.NO);
+        Alert unsavedEditAlert = new Alert(Alert.AlertType.CONFIRMATION, "真的要刪除" + connectionProfileList.get(currentSelectedProfile) + "嗎?", ButtonType.YES, ButtonType.NO);
         unsavedEditAlert.showAndWait();
         if (unsavedEditAlert.getResult() == ButtonType.YES) {
-            serverList.remove(currentSelectedServer);
-            serverListView.refresh();
-            serverListView.getSelectionModel().select(serverList.size());
-            LocalStorage.getInstance().saveLoginCredentials(new ArrayList<LoginCredential>(serverList));
+            connectionProfileList.remove(currentSelectedProfile);
+            connectionProfileListView.refresh();
+            connectionProfileListView.getSelectionModel().select(connectionProfileList.size());
+            LocalStorage.getInstance().saveConnectionProfiles(new ArrayList<ConnectionProfile>(connectionProfileList));
         }
     }
 
     @FXML
     void onLoginButtonClicked(MouseEvent event) {
-        Server server = new Server(serverList.get(currentSelectedServer));
+        Server server = new Server(connectionProfileList.get(currentSelectedProfile));
         try {
             server.createConnections();
         } catch (SQLException e) {
@@ -153,5 +161,14 @@ public class LoginController {
             e.printStackTrace();
         }
 
+    }
+
+    @FXML
+    void onLogSearchButtonClicked(MouseEvent event) {
+        try {
+            ViewFactory.showLogSearchWindow();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

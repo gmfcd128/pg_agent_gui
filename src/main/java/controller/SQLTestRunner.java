@@ -35,7 +35,7 @@ public class SQLTestRunner extends Task<Boolean> {
     @Override
     protected Boolean call() throws Exception {
         TestResult returnVal;
-        System.out.println("MOCK");
+        //System.out.println("MOCK");
         Thread.sleep(1000);
 
         try {
