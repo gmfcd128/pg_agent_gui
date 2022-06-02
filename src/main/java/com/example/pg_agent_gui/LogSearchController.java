@@ -1,20 +1,30 @@
 package com.example.pg_agent_gui;
 
 import controller.LogSearchHandler;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.converter.IntegerStringConverter;
 import model.PGLogEntry;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class LogSearchController {
-    LogSearchHandler logSearchHandler;
+    private LogSearchHandler logSearchHandler;
     private Stage stage;
 
     private ObservableList<String> distinctApplicationName;
@@ -22,6 +32,8 @@ public class LogSearchController {
     private ObservableList<String> distinctUsername;
     private ObservableList<String> distinctDatabaseName;
     private ObservableList<String> distinctHost;
+
+    private ObservableList<PGLogEntry> filteredResult;
 
     @FXML
     private ListView<String> appNameFilterListView;
@@ -33,7 +45,7 @@ public class LogSearchController {
     private Button exportButton;
 
     @FXML
-    private Spinner<String> timeRangeLowerHour;
+    private Spinner<Integer> timeRangeLowerHour;
 
     @FXML
     private Button folderBrowseButton;
@@ -51,27 +63,107 @@ public class LogSearchController {
     private DatePicker timeRangeLowerData;
 
     @FXML
-    private Spinner<?> timeRangeLowerMinute;
+    private Spinner<Integer> timeRangeLowerMinute;
 
     @FXML
-    private Spinner<?> timeRangeLowerSecond;
+    private Spinner<Integer> timeRangeLowerSecond;
 
     @FXML
     private DatePicker timeRangeUpperDate;
 
     @FXML
-    private Spinner<?> timeRangeUpperHour;
+    private Spinner<Integer> timeRangeUpperHour;
 
     @FXML
-    private Spinner<?> timeRangeUpperMinute;
+    private Spinner<Integer> timeRangeUpperMinute;
 
     @FXML
-    private Spinner<?> timeRangeUpperSecond;
+    private Spinner<Integer> timeRangeUpperSecond;
 
     @FXML
     private ListView<String> usernameFilterList;
     @FXML
     private Label logDirectoryLabel;
+
+    // columns for tableview
+    @FXML
+    private TableColumn<PGLogEntry, String> applicationNameTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> backendTypeTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> clientHostTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> commandTagTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> contextTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> databaseNameTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> errorMessageDetailTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> errorMessageTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> errorSeverityTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> hintTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Integer> internalQueryPosTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> internalQueryTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Integer> leaderPidTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> locationTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Integer> processIdTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Long> queryIdTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Integer> queryPosTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> queryTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Long> regularTidTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> sessionIdTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Long> sessionLineNumTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Date> sessionStartTimeTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> sqlStateTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, Date> timestampTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> usernameTableCol;
+
+    @FXML
+    private TableColumn<PGLogEntry, String> virtualTIdTableCol;
+
 
     public LogSearchController(Stage stage) {
         this.stage = stage;
@@ -110,6 +202,7 @@ public class LogSearchController {
             distinctUsername.setAll(logSearchHandler.getDistinctUsername());
             distinctDatabaseName.setAll(logSearchHandler.getDistinctDatabaseName());
             distinctHost.setAll(logSearchHandler.getDistinctHost());
+            populateTableView();
         }
 
     }
@@ -120,16 +213,189 @@ public class LogSearchController {
         distinctUsername = FXCollections.observableArrayList();
         distinctDatabaseName = FXCollections.observableArrayList();
         distinctHost = FXCollections.observableArrayList();
+        filteredResult = FXCollections.observableArrayList();
         appNameFilterListView.setItems(distinctApplicationName);
         appNameFilterListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        Callback<ListView<String>, ListCell<String>> listViewStringFormat = aram -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else if (item.equals("")) {
+                    setText("(empty)");
+                } else {
+                    setText(item);
+                }
+            }
+        };
+        appNameFilterListView.setCellFactory(listViewStringFormat);
+        appNameFilterListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = appNameFilterListView.getSelectionModel().getSelectedItems();
+            List<String> appNameContains = new ArrayList<>();
+            for (String name : selectedItems) {
+                appNameContains.add(name);
+            }
+            logSearchHandler.setApplicationNameContains(appNameContains);
+            populateTableView();
+        });
         sessionIdFilterListView.setItems(distinctSessionId);
         sessionIdFilterListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        sessionIdFilterListView.setCellFactory(listViewStringFormat);
+        sessionIdFilterListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = sessionIdFilterListView.getSelectionModel().getSelectedItems();
+            List<String> sessionIdContains = new ArrayList<>();
+            for (String name : selectedItems) {
+                sessionIdContains.add(name);
+            }
+            logSearchHandler.setSessionIdContains(sessionIdContains);
+            populateTableView();
+        });
         usernameFilterList.setItems(distinctUsername);
         usernameFilterList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        usernameFilterList.setCellFactory(listViewStringFormat);
+        usernameFilterList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = usernameFilterList.getSelectionModel().getSelectedItems();
+            List<String> usernameContains = new ArrayList<>();
+            for (String name : selectedItems) {
+                usernameContains.add(name);
+            }
+            logSearchHandler.setUsernameContains(usernameContains);
+            populateTableView();
+        });
         databaseFilterListView.setItems(distinctDatabaseName);
         databaseFilterListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        databaseFilterListView.setCellFactory(param -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else if (item.equals("")) {
+                    setText("(empty)");
+                } else {
+                    setText(item);
+                }
+            }
+        });
+        databaseFilterListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = databaseFilterListView.getSelectionModel().getSelectedItems();
+            List<String> databaseContains = new ArrayList<>();
+            for (String name : selectedItems) {
+                databaseContains.add(name);
+            }
+            logSearchHandler.setDatabaseContains(databaseContains);
+            populateTableView();
+        });
         hostFilterListVIew.setItems(distinctHost);
         hostFilterListVIew.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        hostFilterListVIew.setCellFactory(param -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else if (item.equals("")) {
+                    setText("(empty)");
+                } else {
+                    setText(item);
+                }
+            }
+        });
+        hostFilterListVIew.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+            ObservableList<String> selectedItems = hostFilterListVIew.getSelectionModel().getSelectedItems();
+            List<String> hostContains = new ArrayList<>();
+            for (String name : selectedItems) {
+                hostContains.add(name);
+            }
+            logSearchHandler.setHostContains(hostContains);
+            populateTableView();
+        });
+
+        // set value properties for table columns
+        timestampTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Date>("Log_time"));
+        usernameTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("User_name"));
+        databaseNameTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Database_name"));
+        processIdTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Integer>("Process_id"));
+        clientHostTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Connection_from"));
+        sessionIdTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Session_id"));
+        sessionLineNumTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Long>("Session_line_num"));
+        commandTagTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Command_tag"));
+        sessionStartTimeTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Date>("Session_start_time"));
+        virtualTIdTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Virtual_transaction_id"));
+        regularTidTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Long>("Transaction_id"));
+        errorSeverityTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Error_severity"));
+        sqlStateTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Sql_state_code"));
+        errorMessageTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Message"));
+        errorMessageDetailTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Detail"));
+        hintTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Hint"));
+        internalQueryTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Internal_query"));
+        internalQueryPosTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Integer>("Internal_query_pos"));
+        contextTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Context"));
+        queryTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Query"));
+        queryPosTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Integer>("Query_pos"));
+        locationTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Location"));
+        applicationNameTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Application_name"));
+        backendTypeTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, String>("Backend_type"));
+        leaderPidTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Integer>("Leader_pid"));
+        queryIdTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Long>("Query_id"));
+        resultTable.setItems(filteredResult);
+        populateTableView();
+    }
+
+    private void setupSpinners() {
+        NumberFormat format = NumberFormat.getIntegerInstance();
+        UnaryOperator<TextFormatter.Change> filter = c -> {
+            if (c.isContentChange()) {
+                ParsePosition parsePosition = new ParsePosition(0);
+                // NumberFormat evaluates the beginning of the text
+                format.parse(c.getControlNewText(), parsePosition);
+                if (parsePosition.getIndex() == 0 ||
+                        parsePosition.getIndex() < c.getControlNewText().length()) {
+                    // reject parsing the complete text failed
+                    return null;
+                }
+            }
+            return c;
+        };
+
+        timeRangeLowerHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                0, 23, 1));
+        timeRangeLowerHour.setEditable(true);
+        timeRangeLowerHour.getEditor().setTextFormatter(new TextFormatter<Integer>(
+                new IntegerStringConverter(), 1, filter));
+        timeRangeLowerMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                1, 59, 1));
+        timeRangeLowerMinute.setEditable(true);
+        timeRangeLowerMinute.getEditor().setTextFormatter(new TextFormatter<Integer>(
+                new IntegerStringConverter(), 1, filter));
+        timeRangeLowerSecond.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                1, 59, 1));
+        timeRangeLowerSecond.setEditable(true);
+        timeRangeLowerSecond.getEditor().setTextFormatter(new TextFormatter<Integer>(
+                new IntegerStringConverter(), 1, filter));
+
+        timeRangeUpperHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                0, 23, 1));
+        timeRangeUpperHour.setEditable(true);
+        timeRangeUpperHour.getEditor().setTextFormatter(new TextFormatter<Integer>(
+                new IntegerStringConverter(), 1, filter));
+        timeRangeUpperMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                1, 59, 1));
+        timeRangeUpperMinute.setEditable(true);
+        timeRangeUpperMinute.getEditor().setTextFormatter(new TextFormatter<Integer>(
+                new IntegerStringConverter(), 1, filter));
+        timeRangeUpperSecond.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                1, 59, 1));
+        timeRangeUpperSecond.setEditable(true);
+        timeRangeUpperSecond.getEditor().setTextFormatter(new TextFormatter<Integer>(
+                new IntegerStringConverter(), 1, filter));
+    }
+
+    private void populateTableView() {
+        filteredResult.clear();
+        filteredResult.addAll(logSearchHandler.getResult());
     }
 
 

@@ -4,7 +4,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import model.PGLogEntry;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -12,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LogSearchHandler {
     private List<PGLogEntry> logEntries;
@@ -59,6 +59,25 @@ public class LogSearchHandler {
     public void setFilterTimeLower(Date date) {
         this.filterTimeLower = date;
     }
+    public void setApplicationNameContains(List<String> appNames) {
+        this.applicationNameContains = appNames;
+    }
+
+    public void setSessionIdContains(List<String> sessionIds) {
+        this.sessionIdContains = sessionIds;
+    }
+
+    public void setUsernameContains(List<String> usernames) {
+        this.usernameContains = usernames;
+    }
+
+    public void setDatabaseContains(List<String> databases) {
+        this.databaseContains = databases;
+    }
+
+    public void setHostContains(List<String> hosts) {
+        this.hostContains = hosts;
+    }
 
     public void setFilterTimeUpper(Date date) {
         this.filterTimeUpper = date;
@@ -69,7 +88,7 @@ public class LogSearchHandler {
         for (PGLogEntry logEntry : logEntries) {
             result.add(logEntry.getApplication_name());
         }
-        result.remove("");
+        //result.remove("");
         return result;
     }
 
@@ -78,7 +97,7 @@ public class LogSearchHandler {
         for (PGLogEntry logEntry : logEntries) {
             result.add(logEntry.getSession_id());
         }
-        result.remove("");
+        //result.remove("");
         return result;
     }
 
@@ -87,7 +106,7 @@ public class LogSearchHandler {
         for (PGLogEntry logEntry : logEntries) {
             result.add(logEntry.getUser_name());
         }
-        result.remove("");
+        //result.remove("");
         return result;
     }
 
@@ -96,7 +115,7 @@ public class LogSearchHandler {
         for (PGLogEntry logEntry : logEntries) {
             result.add(logEntry.getDatabase_name());
         }
-        result.remove("");
+        //result.remove("");
         return result;
     }
 
@@ -107,6 +126,14 @@ public class LogSearchHandler {
         }
         result.remove("");
         return result;
+    }
+
+    public List<PGLogEntry> getResult() {
+        return this.logEntries.stream().filter(p -> this.applicationNameContains.isEmpty() || this.applicationNameContains.contains(p.getDatabase_name()))
+                .filter(p -> this.sessionIdContains.isEmpty() || this.sessionIdContains.contains(p.getSession_id()))
+                .filter(p -> this.usernameContains.isEmpty() || this.usernameContains.contains(p.getUser_name()))
+                .filter(p -> this.databaseContains.isEmpty() || this.databaseContains.contains(p.getDatabase_name()))
+                .filter(p -> this.hostContains.isEmpty() || this.hostContains.contains(p.getConnection_from())).collect(Collectors.toList());
     }
 
 }

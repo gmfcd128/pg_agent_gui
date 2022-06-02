@@ -96,6 +96,90 @@ public class PGLogEntry {
 
     }
 
+    public String getBackend_type() {
+        return backend_type;
+    }
+
+    public Integer getLeader_pid() {
+        return leader_pid;
+    }
+
+    public Long getQuery_id() {
+        return query_id;
+    }
+
+    public Date getLog_time() {
+        return log_time;
+    }
+
+    public Integer getProcess_id() {
+        return process_id;
+    }
+
+    public Long getSession_line_num() {
+        return session_line_num;
+    }
+
+    public String getCommand_tag() {
+        return command_tag;
+    }
+
+    public Date getSession_start_time() {
+        return session_start_time;
+    }
+
+    public String getVirtual_transaction_id() {
+        return virtual_transaction_id;
+    }
+
+    public Long getTransaction_id() {
+        return transaction_id;
+    }
+
+    public String getError_severity() {
+        return error_severity;
+    }
+
+    public String getSql_state_code() {
+        return sql_state_code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public String getInternal_query() {
+        return internal_query;
+    }
+
+    public Integer getInternal_query_pos() {
+        return internal_query_pos;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public Integer getQuery_pos() {
+        return query_pos;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
     public String getConnection_from() {
         return connection_from;
     }

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -94,42 +95,99 @@
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" valignment="TOP" vgrow="ALWAYS" />
               </rowConstraints>
                <children>
-                  <Label text="應用程式名稱">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <AnchorPane>
+                     <children>
+                        <Label text="應用程式名稱" AnchorPane.leftAnchor="5.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                     </children>
+                  </AnchorPane>
                   <ListView fx:id="appNameFilterListView" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1" />
-                  <Label text="session id" GridPane.columnIndex="1">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <AnchorPane GridPane.columnIndex="1">
+                     <children>
+                        <Label text="session id" AnchorPane.leftAnchor="5.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Button mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                     </children>
+                  </AnchorPane>
                   <ListView fx:id="sessionIdFilterListView" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label text="使用者名稱" GridPane.columnIndex="2">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <AnchorPane GridPane.columnIndex="2">
+                     <children>
+                        <Label text="使用者名稱" AnchorPane.leftAnchor="5.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                     </children>
+                  </AnchorPane>
                   <ListView fx:id="usernameFilterList" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Label text="資料庫名稱" GridPane.columnIndex="3">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <AnchorPane GridPane.columnIndex="3">
+                     <children>
+                        <Label text="資料庫名稱" AnchorPane.leftAnchor="5.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                     </children>
+                  </AnchorPane>
                   <ListView fx:id="databaseFilterListView" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <Label text="host" GridPane.columnIndex="4">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <AnchorPane GridPane.columnIndex="4">
+                     <children>
+                        <Label text="host" AnchorPane.leftAnchor="5.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                     </children>
+                  </AnchorPane>
                   <ListView fx:id="hostFilterListVIew" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                </children>
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </GridPane>
-            <TableView fx:id="resultTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <TableView fx:id="resultTable" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="timestampTableCol" minWidth="-1.0" prefWidth="82.0" text="time stamp" />
+                  <TableColumn fx:id="usernameTableCol" minWidth="-1.0" prefWidth="81.0" text="user name" />
+                  <TableColumn fx:id="databaseNameTableCol" minWidth="-1.0" prefWidth="99.0" text="database name" />
+                  <TableColumn fx:id="processIdTableCol" minWidth="-1.0" prefWidth="92.0" text="process ID" />
+                  <TableColumn fx:id="clientHostTableCol" minWidth="-1.0" prefWidth="153.0" text="client host:port number" />
+                  <TableColumn fx:id="sessionIdTableCol" minWidth="-1.0" prefWidth="71.0" text="session ID" />
+                  <TableColumn fx:id="sessionLineNumTableCol" minWidth="-1.0" prefWidth="22.0" text="session line number" />
+                  <TableColumn fx:id="commandTagTableCol" minWidth="-1.0" prefWidth="75.0" text="command tag" />
+                  <TableColumn fx:id="sessionStartTimeTableCol" minWidth="-1.0" prefWidth="75.0" text="session start time" />
+                  <TableColumn fx:id="virtualTIdTableCol" minWidth="-1.0" prefWidth="75.0" text="virtual transaction ID" />
+                  <TableColumn fx:id="regularTidTableCol" minWidth="-1.0" prefWidth="75.0" text="regular transaction ID" />
+                  <TableColumn fx:id="errorSeverityTableCol" minWidth="-1.0" prefWidth="75.0" text="error severity" />
+                  <TableColumn fx:id="sqlStateTableCol" minWidth="-1.0" prefWidth="75.0" text="SQLSTATE code" />
+                  <TableColumn fx:id="errorMessageTableCol" minWidth="-1.0" prefWidth="75.0" text="error message" />
+                  <TableColumn fx:id="errorMessageDetailTableCol" minWidth="-1.0" prefWidth="75.0" text="error message detail" />
+                  <TableColumn fx:id="hintTableCol" minWidth="-1.0" prefWidth="75.0" text="hint" />
+                  <TableColumn fx:id="internalQueryTableCol" minWidth="-1.0" prefWidth="75.0" text="internal query that led to the error" />
+                  <TableColumn fx:id="internalQueryPosTableCol" minWidth="-1.0" prefWidth="75.0" text="character count of the error position therein" />
+                  <TableColumn fx:id="contextTableCol" minWidth="-1.0" prefWidth="75.0" text="error context" />
+                  <TableColumn fx:id="queryTableCol" minWidth="-1.0" prefWidth="75.0" text="user query that led to the error" />
+                  <TableColumn fx:id="queryPosTableCol" minWidth="-1.0" prefWidth="75.0" text="character count of the error position therein" />
+                  <TableColumn fx:id="locationTableCol" minWidth="-1.0" prefWidth="75.0" text="location of the error in the PostgreSQL source code" />
+                  <TableColumn fx:id="applicationNameTableCol" minWidth="-1.0" prefWidth="75.0" text="application name" />
+                  <TableColumn fx:id="backendTypeTableCol" minWidth="-1.0" prefWidth="75.0" text="backend type" />
+                  <TableColumn fx:id="leaderPidTableCol" minWidth="-1.0" prefWidth="75.0" text="process ID of parallel group leader" />
+                  <TableColumn fx:id="queryIdTableCol" minWidth="-1.0" prefWidth="75.0" text="query id" />
+               </columns>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </TableView>
             <HBox alignment="CENTER" prefWidth="200.0">
                <children>
                   <Button fx:id="exportButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#onExportButtonCLick" text="匯出結果" />
