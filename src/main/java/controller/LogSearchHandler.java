@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 public class LogSearchHandler {
     private List<PGLogEntry> logEntries;
+
+    private List<PGLogEntry> logEntriesFiltered;
     private Date filterTimeLower;
     private Date filterTimeUpper;
     private List<String> applicationNameContains;
@@ -30,6 +32,7 @@ public class LogSearchHandler {
 
     public void reset() {
         logEntries = new ArrayList<>();
+        logEntriesFiltered = new ArrayList<>();
         applicationNameContains = new ArrayList<>();
         sessionIdContains = new ArrayList<>();
         usernameContains = new ArrayList<>();
@@ -45,6 +48,7 @@ public class LogSearchHandler {
                 String[] tokens;
                 while ((tokens = reader.readNext()) != null) {
                     logEntries.add(new PGLogEntry(tokens));
+                    logEntriesFiltered.add(new PGLogEntry(tokens));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -59,6 +63,7 @@ public class LogSearchHandler {
     public void setFilterTimeLower(Date date) {
         this.filterTimeLower = date;
     }
+
     public void setApplicationNameContains(List<String> appNames) {
         this.applicationNameContains = appNames;
     }
@@ -85,7 +90,7 @@ public class LogSearchHandler {
 
     public SortedSet<String> getDistinctApplicationName() {
         SortedSet<String> result = new TreeSet<>();
-        for (PGLogEntry logEntry : logEntries) {
+        for (PGLogEntry logEntry : logEntriesFiltered) {
             result.add(logEntry.getApplication_name());
         }
         //result.remove("");
@@ -94,7 +99,7 @@ public class LogSearchHandler {
 
     public SortedSet<String> getDistinctSessionId() {
         SortedSet<String> result = new TreeSet<>();
-        for (PGLogEntry logEntry : logEntries) {
+        for (PGLogEntry logEntry : logEntriesFiltered) {
             result.add(logEntry.getSession_id());
         }
         //result.remove("");
@@ -103,7 +108,7 @@ public class LogSearchHandler {
 
     public SortedSet<String> getDistinctUsername() {
         SortedSet<String> result = new TreeSet<>();
-        for (PGLogEntry logEntry : logEntries) {
+        for (PGLogEntry logEntry : logEntriesFiltered) {
             result.add(logEntry.getUser_name());
         }
         //result.remove("");
@@ -112,7 +117,7 @@ public class LogSearchHandler {
 
     public SortedSet<String> getDistinctDatabaseName() {
         SortedSet<String> result = new TreeSet<>();
-        for (PGLogEntry logEntry : logEntries) {
+        for (PGLogEntry logEntry : logEntriesFiltered) {
             result.add(logEntry.getDatabase_name());
         }
         //result.remove("");
@@ -121,19 +126,21 @@ public class LogSearchHandler {
 
     public SortedSet<String> getDistinctHost() {
         SortedSet<String> result = new TreeSet<>();
-        for (PGLogEntry logEntry : logEntries) {
+        for (PGLogEntry logEntry : logEntriesFiltered) {
             result.add(logEntry.getConnection_from());
         }
         result.remove("");
         return result;
     }
 
-    public List<PGLogEntry> getResult() {
-        return this.logEntries.stream().filter(p -> this.applicationNameContains.isEmpty() || this.applicationNameContains.contains(p.getDatabase_name()))
+    public List<PGLogEntry> calculateResult() {
+        logEntriesFiltered = this.logEntries.stream().filter(p -> (filterTimeLower == null || filterTimeUpper == null) ? true : (p.getLog_time().after(filterTimeLower) && p.getLog_time().before(filterTimeUpper)))
+                .filter(p -> this.applicationNameContains.isEmpty() || this.applicationNameContains.contains(p.getDatabase_name()))
                 .filter(p -> this.sessionIdContains.isEmpty() || this.sessionIdContains.contains(p.getSession_id()))
                 .filter(p -> this.usernameContains.isEmpty() || this.usernameContains.contains(p.getUser_name()))
                 .filter(p -> this.databaseContains.isEmpty() || this.databaseContains.contains(p.getDatabase_name()))
                 .filter(p -> this.hostContains.isEmpty() || this.hostContains.contains(p.getConnection_from())).collect(Collectors.toList());
+        return logEntriesFiltered;
     }
 
 }

@@ -18,7 +18,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -60,7 +62,7 @@ public class LogSearchController {
     private ListView<String> sessionIdFilterListView;
 
     @FXML
-    private DatePicker timeRangeLowerData;
+    private DatePicker timeRangeLowerDate;
 
     @FXML
     private Spinner<Integer> timeRangeLowerMinute;
@@ -164,6 +166,25 @@ public class LogSearchController {
     @FXML
     private TableColumn<PGLogEntry, String> virtualTIdTableCol;
 
+    @FXML
+    private Button appNameFilterResetButton;
+
+    @FXML
+    private Button databaseFilterResetButton;
+
+    @FXML
+    private Button hostFilterResetButton;
+
+    @FXML
+    private Button sessionIdFilterResetButton;
+
+    @FXML
+    private Button timeRangeApplyButton;
+
+    @FXML
+    private Button usernameFilterResetButton;
+
+
 
     public LogSearchController(Stage stage) {
         this.stage = stage;
@@ -197,14 +218,18 @@ public class LogSearchController {
             for (File file : files) {
                 logSearchHandler.loadFromFile(file.getAbsolutePath());
             }
-            distinctApplicationName.setAll(logSearchHandler.getDistinctApplicationName());
-            distinctSessionId.setAll(logSearchHandler.getDistinctSessionId());
-            distinctUsername.setAll(logSearchHandler.getDistinctUsername());
-            distinctDatabaseName.setAll(logSearchHandler.getDistinctDatabaseName());
-            distinctHost.setAll(logSearchHandler.getDistinctHost());
+            updateFilterListview();
             populateTableView();
         }
 
+    }
+
+    private void updateFilterListview() {
+        distinctApplicationName.setAll(logSearchHandler.getDistinctApplicationName());
+        distinctSessionId.setAll(logSearchHandler.getDistinctSessionId());
+        distinctUsername.setAll(logSearchHandler.getDistinctUsername());
+        distinctDatabaseName.setAll(logSearchHandler.getDistinctDatabaseName());
+        distinctHost.setAll(logSearchHandler.getDistinctHost());
     }
 
     public void initialize() {
@@ -217,7 +242,7 @@ public class LogSearchController {
         appNameFilterListView.setItems(distinctApplicationName);
         appNameFilterListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        Callback<ListView<String>, ListCell<String>> listViewStringFormat = aram -> new ListCell<String>() {
+        Callback<ListView<String>, ListCell<String>> listViewStringFormat = param -> new ListCell<String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -342,9 +367,10 @@ public class LogSearchController {
         queryIdTableCol.setCellValueFactory(new PropertyValueFactory<PGLogEntry, Long>("Query_id"));
         resultTable.setItems(filteredResult);
         populateTableView();
+        setupTimeFilterUI();
     }
 
-    private void setupSpinners() {
+    private void setupTimeFilterUI() {
         NumberFormat format = NumberFormat.getIntegerInstance();
         UnaryOperator<TextFormatter.Change> filter = c -> {
             if (c.isContentChange()) {
@@ -360,42 +386,103 @@ public class LogSearchController {
             return c;
         };
 
+        timeRangeLowerDate.setValue(LocalDate.now());
+
         timeRangeLowerHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, 23, 1));
+                0, 23, 0));
         timeRangeLowerHour.setEditable(true);
         timeRangeLowerHour.getEditor().setTextFormatter(new TextFormatter<Integer>(
-                new IntegerStringConverter(), 1, filter));
+                new IntegerStringConverter(), 0, filter));
         timeRangeLowerMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                1, 59, 1));
+                0, 59, 0));
         timeRangeLowerMinute.setEditable(true);
         timeRangeLowerMinute.getEditor().setTextFormatter(new TextFormatter<Integer>(
-                new IntegerStringConverter(), 1, filter));
+                new IntegerStringConverter(), 0, filter));
         timeRangeLowerSecond.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                1, 59, 1));
+                0, 59, 0));
         timeRangeLowerSecond.setEditable(true);
         timeRangeLowerSecond.getEditor().setTextFormatter(new TextFormatter<Integer>(
-                new IntegerStringConverter(), 1, filter));
+                new IntegerStringConverter(), 0, filter));
 
+
+        timeRangeUpperDate.setValue(LocalDate.now());
         timeRangeUpperHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, 23, 1));
+                0, 23, 0));
         timeRangeUpperHour.setEditable(true);
         timeRangeUpperHour.getEditor().setTextFormatter(new TextFormatter<Integer>(
-                new IntegerStringConverter(), 1, filter));
+                new IntegerStringConverter(), 0, filter));
         timeRangeUpperMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                1, 59, 1));
+                0, 59, 0));
         timeRangeUpperMinute.setEditable(true);
         timeRangeUpperMinute.getEditor().setTextFormatter(new TextFormatter<Integer>(
-                new IntegerStringConverter(), 1, filter));
+                new IntegerStringConverter(), 0, filter));
         timeRangeUpperSecond.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                1, 59, 1));
+                0, 59, 0));
         timeRangeUpperSecond.setEditable(true);
         timeRangeUpperSecond.getEditor().setTextFormatter(new TextFormatter<Integer>(
-                new IntegerStringConverter(), 1, filter));
+                new IntegerStringConverter(), 0, filter));
     }
 
     private void populateTableView() {
         filteredResult.clear();
-        filteredResult.addAll(logSearchHandler.getResult());
+        filteredResult.addAll(logSearchHandler.calculateResult());
+    }
+
+    @FXML
+    void onAppNameFilterResetButtonClick(MouseEvent event) {
+        appNameFilterListView.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    void onDatabaseFilterResetButtonClick(MouseEvent event) {
+        databaseFilterListView.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    void onHostFilterResetButtonClick(MouseEvent event) {
+        hostFilterListVIew.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    void onSessionIdFilterResetButtonClick(MouseEvent event) {
+        sessionIdFilterListView.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    void onTimeRangeApplyButtonClick(MouseEvent event) {
+        LocalDate localDateLower = timeRangeLowerDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, localDateLower.getYear());
+        calendar.set(Calendar.MONTH, localDateLower.getMonthValue() - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, localDateLower.getDayOfMonth());
+        calendar.set(Calendar.HOUR_OF_DAY, timeRangeLowerHour.getValue());
+        calendar.set(Calendar.MINUTE, timeRangeLowerMinute.getValue());
+        calendar.set(Calendar.SECOND, timeRangeLowerSecond.getValue());
+        Date timeRangeLower = calendar.getTime();
+        LocalDate localDateUpper = timeRangeUpperDate.getValue();
+        calendar.set(Calendar.YEAR, localDateUpper.getYear());
+        calendar.set(Calendar.MONTH, localDateUpper.getMonthValue() - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, localDateUpper.getDayOfMonth());
+        calendar.set(Calendar.HOUR_OF_DAY, timeRangeUpperHour.getValue());
+        calendar.set(Calendar.MINUTE, timeRangeUpperMinute.getValue());
+        calendar.set(Calendar.SECOND, timeRangeUpperSecond.getValue());
+        Date timeRangeUpper = calendar.getTime();
+        if (timeRangeLower.after(timeRangeUpper)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "開始日期不得在結束時間之後.", ButtonType.OK);
+            alert.showAndWait();
+        } else {
+            logSearchHandler.setFilterTimeLower(timeRangeLower);
+            logSearchHandler.setFilterTimeUpper(timeRangeUpper);
+            logSearchHandler.calculateResult();
+            updateFilterListview();
+            populateTableView();
+        }
+
+    }
+
+    @FXML
+    void onUsernameFilterResetButtonClick(MouseEvent event) {
+        usernameFilterList.getSelectionModel().clearSelection();
     }
 
 

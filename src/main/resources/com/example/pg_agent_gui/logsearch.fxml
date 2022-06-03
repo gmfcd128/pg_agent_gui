@@ -47,7 +47,7 @@
                   <Button fx:id="folderBrowseButton" mnemonicParsing="false" onMouseClicked="#onFolderBrowseButtonClick" text="選擇" />
                </children>
             </HBox>
-            <Label text="時間範圍">
+            <Label text="時間範圍(exclusive)">
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
@@ -60,7 +60,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
                <children>
-                  <DatePicker fx:id="timeRangeLowerData" />
+                  <DatePicker fx:id="timeRangeLowerDate" />
                   <Spinner fx:id="timeRangeLowerHour" prefWidth="60.0" />
                   <Spinner fx:id="timeRangeLowerMinute" prefWidth="60.0" />
                   <Spinner fx:id="timeRangeLowerSecond" prefWidth="60.0" />
@@ -80,6 +80,11 @@
                   <Spinner fx:id="timeRangeUpperHour" prefWidth="60.0" />
                   <Spinner fx:id="timeRangeUpperMinute" prefWidth="60.0" />
                   <Spinner fx:id="timeRangeUpperSecond" prefWidth="60.0" />
+                  <Button fx:id="timeRangeApplyButton" mnemonicParsing="false" onMouseClicked="#onTimeRangeApplyButtonClick" text="套用">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
                </children>
             </HBox>
             <GridPane>
@@ -102,7 +107,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                        <Button fx:id="appNameFilterResetButton" alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#onAppNameFilterResetButtonClick" text="重設" AnchorPane.rightAnchor="5.0" />
                      </children>
                   </AnchorPane>
                   <ListView fx:id="appNameFilterListView" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1" />
@@ -113,7 +118,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Button mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                        <Button fx:id="sessionIdFilterResetButton" mnemonicParsing="false" onMouseClicked="#onSessionIdFilterResetButtonClick" text="重設" AnchorPane.rightAnchor="5.0" />
                      </children>
                   </AnchorPane>
                   <ListView fx:id="sessionIdFilterListView" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -124,7 +129,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                        <Button fx:id="usernameFilterResetButton" alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#onUsernameFilterResetButtonClick" text="重設" AnchorPane.rightAnchor="5.0" />
                      </children>
                   </AnchorPane>
                   <ListView fx:id="usernameFilterList" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -135,7 +140,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                        <Button fx:id="databaseFilterResetButton" alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#onDatabaseFilterResetButtonClick" text="重設" AnchorPane.rightAnchor="5.0" />
                      </children>
                   </AnchorPane>
                   <ListView fx:id="databaseFilterListView" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
@@ -146,7 +151,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <Button alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" text="重設" AnchorPane.rightAnchor="5.0" />
+                        <Button fx:id="hostFilterResetButton" alignment="TOP_CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#onHostFilterResetButtonClick" text="重設" AnchorPane.rightAnchor="5.0" />
                      </children>
                   </AnchorPane>
                   <ListView fx:id="hostFilterListVIew" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />

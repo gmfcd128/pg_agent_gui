@@ -61,6 +61,18 @@ public class LoginController {
         connectionProfileList = FXCollections.observableArrayList();
         connectionProfileList.addAll(LocalStorage.getInstance().getConnectionProfiles());
         connectionProfileListView.setItems(connectionProfileList);
+        connectionProfileListView.setCellFactory(param -> new ListCell<ConnectionProfile>() {
+            @Override
+            protected void updateItem(ConnectionProfile item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getLoginCredential().getServerName() + " (host:" + item.getLoginCredential().getIp() + ")");
+                }
+            }
+        });
         connectionProfileListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ConnectionProfile>() {
 
             @Override
