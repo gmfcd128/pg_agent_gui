@@ -33,7 +33,7 @@ public class PGLogEntry {
     private Long query_id;
 
     public PGLogEntry(String[] attributes) {
-        log_time = getDateFromString(attributes[0]);
+        log_time = getDateFromStringMillisecond(attributes[0]);
         user_name = attributes[1];
         database_name = attributes[2];
         try {
@@ -51,7 +51,7 @@ public class PGLogEntry {
         }
 
         command_tag = attributes[7];
-        session_start_time = getDateFromStringVar(attributes[8]);
+        session_start_time = getDateFromString(attributes[8]);
         virtual_transaction_id = attributes[9];
         try {
             transaction_id = Long.parseLong(attributes[10]);
@@ -200,7 +200,7 @@ public class PGLogEntry {
         return application_name;
     }
 
-    private Date getDateFromString(String timestamp) {
+    private Date getDateFromStringMillisecond(String timestamp) {
         String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS z";
         try {
             Date date = new SimpleDateFormat(dateFormat).parse(timestamp);
@@ -211,7 +211,7 @@ public class PGLogEntry {
         return null;
     }
 
-    private Date getDateFromStringVar(String timestamp) {
+    private Date getDateFromString(String timestamp) {
         String dateFormat = "yyyy-MM-dd HH:mm:ss z";
         try {
             Date date = new SimpleDateFormat(dateFormat).parse(timestamp);

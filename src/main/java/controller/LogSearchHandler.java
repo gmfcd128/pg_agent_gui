@@ -27,10 +27,6 @@ public class LogSearchHandler {
 
 
     public LogSearchHandler() {
-        reset();
-    }
-
-    public void reset() {
         logEntries = new ArrayList<>();
         logEntriesFiltered = new ArrayList<>();
         applicationNameContains = new ArrayList<>();

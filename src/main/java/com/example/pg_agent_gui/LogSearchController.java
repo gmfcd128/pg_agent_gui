@@ -1,5 +1,6 @@
 package com.example.pg_agent_gui;
 
+import com.opencsv.CSVWriter;
 import controller.LogSearchHandler;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
@@ -16,6 +18,10 @@ import model.PGLogEntry;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.LocalDate;
@@ -185,7 +191,6 @@ public class LogSearchController {
     private Button usernameFilterResetButton;
 
 
-
     public LogSearchController(Stage stage) {
         this.stage = stage;
         this.logSearchHandler = new LogSearchHandler();
@@ -193,7 +198,52 @@ public class LogSearchController {
 
     @FXML
     void onExportButtonCLick(MouseEvent event) {
+        FileChooser fileChooser = new FileChooser();
 
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Comma separated text file (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            Writer writer = null;
+            try {
+                writer = Files.newBufferedWriter(Paths.get(file.getAbsolutePath()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            CSVWriter csvWriter = new CSVWriter(writer,
+                    CSVWriter.DEFAULT_SEPARATOR,
+                    CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.DEFAULT_LINE_END);
+
+            String[] tableHead = new String[resultTable.getColumns().size()];
+            for (int j = 0; j < resultTable.getColumns().size(); j++) {
+                tableHead[j] = resultTable.getColumns().get(j).getText();
+            }
+            csvWriter.writeNext(tableHead);
+
+            for (int i = 0; i < resultTable.getItems().size(); i++) {
+                String[] row = new String[resultTable.getColumns().size()];
+                for (int j = 0; j < resultTable.getColumns().size(); j++) {
+                    if (resultTable.getColumns().get(j).getCellData(i) != null) {
+                        row[j] = resultTable.getColumns().get(j).getCellData(i).toString();
+                    } else {
+                        row[j] = "";
+                    }
+                }
+                csvWriter.writeNext(row);
+            }
+
+            try {
+                csvWriter.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @FXML
@@ -214,7 +264,7 @@ public class LogSearchController {
                 }
             };
             File[] files = f.listFiles(textFilter);
-            logSearchHandler.reset();
+            logSearchHandler = new LogSearchHandler();
             for (File file : files) {
                 logSearchHandler.loadFromFile(file.getAbsolutePath());
             }
