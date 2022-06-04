@@ -14,9 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -59,6 +62,36 @@ public class LogSearchHandlerTest {
         List<PGLogEntry> result = logSearchHandler.calculateResult();
 
         assertEquals(19, result.size());
+        SimpleDateFormat pgLogTimestampMillisecond = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
+        try {
+            // test date column read for some data
+            Date expected;
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.966 GMT");
+            assertEquals(expected, result.get(0).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.967 GMT");
+            assertEquals(expected, result.get(1).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.967 GMT");
+            assertEquals(expected, result.get(2).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.969 GMT");
+            assertEquals(expected, result.get(3).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.972 GMT");
+            assertEquals(expected, result.get(4).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.981 GMT");
+            assertEquals(expected, result.get(5).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:26:49.941 GMT");
+            assertEquals(expected, result.get(6).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:29:13.211 GMT");
+            assertEquals(expected, result.get(7).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:29:16.250 GMT");
+            assertEquals(expected, result.get(8).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:29:16.251 GMT");
+            assertEquals(expected, result.get(9).getLog_time());
+            expected = pgLogTimestampMillisecond.parse("2022-06-01 01:29:16.252 GMT");
+            assertEquals(expected, result.get(10).getLog_time());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 
