@@ -130,7 +130,8 @@ public class LogSearchHandler {
     }
 
     public List<PGLogEntry> calculateResult() {
-        logEntriesFiltered = this.logEntries.stream().filter(p -> (filterTimeLower == null || filterTimeUpper == null) ? true : (p.getLog_time().after(filterTimeLower) && p.getLog_time().before(filterTimeUpper)))
+        logEntriesFiltered = this.logEntries.stream().filter(p -> filterTimeLower == null || p.getLog_time().after(filterTimeLower))
+                .filter(p -> filterTimeUpper == null || p.getLog_time().before(filterTimeUpper))
                 .filter(p -> this.applicationNameContains.isEmpty() || this.applicationNameContains.contains(p.getDatabase_name()))
                 .filter(p -> this.sessionIdContains.isEmpty() || this.sessionIdContains.contains(p.getSession_id()))
                 .filter(p -> this.usernameContains.isEmpty() || this.usernameContains.contains(p.getUser_name()))

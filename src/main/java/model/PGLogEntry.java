@@ -74,7 +74,7 @@ public class PGLogEntry {
         context = attributes[18];
         query = attributes[19];
         try {
-            query_pos = Integer.parseInt(attributes[21]);
+            query_pos = Integer.parseInt(attributes[20]);
         } catch (NumberFormatException e) {
             query_pos = null;
         }
