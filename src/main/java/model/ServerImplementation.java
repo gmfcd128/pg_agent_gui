@@ -1,6 +1,8 @@
 package model;
 
-public class ServerImplementation {
+import java.io.Serializable;
+
+public class ServerImplementation implements Serializable {
     public void setPostgresRestartCommand(String postgresRestartCommand) {
         this.postgresRestartCommand = postgresRestartCommand;
     }

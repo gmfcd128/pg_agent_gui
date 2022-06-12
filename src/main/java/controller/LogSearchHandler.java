@@ -39,7 +39,7 @@ public class LogSearchHandler {
     public void loadFromFile(String path) {
         Path pathToFile = Paths.get(path);
         try {
-            String fileContent = new String(Files.readAllBytes(pathToFile), Charset.defaultCharset());
+            String fileContent = Files.readString(pathToFile, Charset.defaultCharset());
             try (CSVReader reader = new CSVReader(new StringReader(fileContent))) {
                 String[] tokens;
                 while ((tokens = reader.readNext()) != null) {

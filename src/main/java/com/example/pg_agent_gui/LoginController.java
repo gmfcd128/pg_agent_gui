@@ -118,6 +118,8 @@ public class LoginController {
         connectionProfileList.get(currentSelectedProfile).getLoginCredential().setSshPassword(sshPasswordField.getText());
         connectionProfileList.get(currentSelectedProfile).getLoginCredential().setPostgresUsername(postgresUsernameField.getText());
         connectionProfileList.get(currentSelectedProfile).getLoginCredential().setPostgresPassword(postgresPasswordField.getText());
+        connectionProfileList.get(currentSelectedProfile).getServerImplementation().setPostgresRestartCommand(postgresRestartCommandField.getText());
+        connectionProfileList.get(currentSelectedProfile).getServerImplementation().setTotalSqlTimeCommand(sqlTotalTimeCommandField.getText());
         connectionProfileListView.refresh();
     }
 

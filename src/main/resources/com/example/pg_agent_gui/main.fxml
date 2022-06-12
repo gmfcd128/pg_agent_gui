@@ -27,7 +27,15 @@
                   <Insets bottom="5.0" top="5.0" />
                </VBox.margin>
             </Button>
-            <Button fx:id="testButton" mnemonicParsing="false" onMouseClicked="#onTestButtonCLicked" text="效能評測">
+            <Button fx:id="testButton" mnemonicParsing="false" onMouseClicked="#onTestButtonClicked" text="效能評測">
+               <font>
+                  <Font size="28.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="macrosButton" mnemonicParsing="false" onMouseClicked="#onMacrosButtonClicked" text="指令捷徑">
                <font>
                   <Font size="28.0" />
                </font>

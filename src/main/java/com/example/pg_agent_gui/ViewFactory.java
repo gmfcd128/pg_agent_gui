@@ -4,6 +4,7 @@ import controller.Server;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.Shortcut;
 import model.TestPlan;
 
 import java.io.IOException;
@@ -26,11 +27,11 @@ public class ViewFactory {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("main.fxml"));
         fxmlLoader.setController(new MainController(stage, server));
-        Scene scene = new Scene(fxmlLoader.load(), 418, 309);
+        Scene scene = new Scene(fxmlLoader.load(), 418, 418);
         stage.setMinWidth(418);
-        stage.setMinHeight(309);
+        stage.setMinHeight(418);
         stage.setMaxWidth(418);
-        stage.setMaxHeight(309);
+        stage.setMaxHeight(418);
         stage.setTitle("Postgres auto experiment GUI - 主畫面");
         stage.setScene(scene);
         stage.show();
@@ -83,4 +84,44 @@ public class ViewFactory {
         stage.setScene(scene);
         stage.show();
     }
+
+    public static void showMacrosWindow(Server server) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("macro_list.fxml"));
+        fxmlLoader.setController(new MacrosController(stage, server));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        stage.setMinWidth(600);
+        stage.setMinHeight(400);
+        stage.setTitle("Postgres auto experiment GUI - 指令捷徑");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static Shortcut showMacroEditWindow(Shortcut shortcut) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("macro_edit.fxml"));
+        MacroEditController controller = new MacroEditController(shortcut, stage);
+        fxmlLoader.setController(controller);
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        stage.setMinWidth(600);
+        stage.setMinHeight(400);
+        stage.setTitle("Postgres auto experiment GUI - 指令捷徑");
+        stage.setScene(scene);
+        stage.showAndWait();
+        return controller.getResult();
+    }
+
+    public static void showMacroExecWindow(Server server, Shortcut shortcut) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("macro_exec.fxml"));
+        fxmlLoader.setController(new MacroExecController(server, stage, shortcut));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        stage.setMinWidth(600);
+        stage.setMinHeight(400);
+        stage.setTitle("Postgres auto experiment GUI - 執行指令");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
 }

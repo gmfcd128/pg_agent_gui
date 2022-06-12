@@ -1,14 +1,13 @@
 package controller;
 
+import Interface.ServerStateChangeListener;
 import com.jcraft.jsch.*;
 import model.ConnectionProfile;
 import model.LoginCredential;
 import model.PGConfigDelta;
 import model.ServerImplementation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -202,6 +201,44 @@ public class Server {
             e.printStackTrace();
         }
         return sqlTimeTotal;
+    }
+
+    public void executeScript(String script, ServerStateChangeListener listener) {
+        String result = "";
+        ChannelExec channel = null;
+        try {
+            channel = (ChannelExec)sshSession.openChannel("exec");
+            channel.setCommand("bash -s");
+            channel.setInputStream(null);
+            OutputStream out = channel.getOutputStream();
+            ((ChannelExec) channel).setErrStream(System.err);
+            InputStream in = channel.getInputStream();
+            ((ChannelExec) channel).setPty(true);
+            channel.connect();
+
+            out.write((script + System.lineSeparator()).getBytes());
+            out.flush();
+            byte[] tmp = new byte[1024];
+            while (true) {
+                while (in.available() > 0) {
+                    int i = in.read(tmp, 0, 1024);
+                    if (i < 0) break;
+                    result += new String(tmp, 0, i);
+                    System.out.println(result);
+                    listener.updateText(result);
+                }
+                if (channel.isClosed()) {
+                    System.out.println("Exit status: " + channel.getExitStatus());
+                    listener.updateText("Exit status: " + channel.getExitStatus() + System.lineSeparator());
+                    break;
+                }
+            }
+            channel.disconnect();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (JSchException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

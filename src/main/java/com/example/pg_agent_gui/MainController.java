@@ -20,6 +20,8 @@ public class MainController {
     private Button settingsButton;
     @FXML
     private Button testButton;
+    @FXML
+    private Button macrosButton;
 
     public MainController(Stage stage, Server server) {
         this.stage = stage;
@@ -40,13 +42,23 @@ public class MainController {
     }
 
     @FXML
-    void onTestButtonCLicked(MouseEvent event) {
+    void onTestButtonClicked(MouseEvent event) {
         try {
             ViewFactory.showTestPlanWindow(server);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    void onMacrosButtonClicked(MouseEvent event) {
+        try {
+            ViewFactory.showMacrosWindow(server);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

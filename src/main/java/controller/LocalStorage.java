@@ -1,9 +1,6 @@
 package controller;
 
-import model.ConnectionProfile;
-import model.LoginCredential;
-import model.PGConfigDelta;
-import model.TestPlan;
+import model.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,6 +12,8 @@ public class LocalStorage {
     private String CONNECTION_PROFILE_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "connectionProfiles.ser";
     private String CONFIG_DIR_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "config_files" + File.separator;
     private String TEST_PLAN_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "test_plans" + File.separator;
+
+    private String MACROS_LOCATION = System.getProperty("user.home") + File.separator + "pg_agent_gui" + File.separator + "macros";
 
     private LocalStorage() {
     }
@@ -152,6 +151,36 @@ public class LocalStorage {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Shortcut> getMacros() {
+        List<Shortcut> resultList = new ArrayList<>();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(MACROS_LOCATION);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            List<Shortcut> persistedList = (List<Shortcut>) objectInputStream.readObject();
+            resultList.addAll(persistedList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
+    public void saveMacros(List<Shortcut> macroList) {
+        try {
+            File file = new File(MACROS_LOCATION);
+            if (!file.exists()) {
+                file.getParentFile().mkdir();
+                file.createNewFile();
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(macroList);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

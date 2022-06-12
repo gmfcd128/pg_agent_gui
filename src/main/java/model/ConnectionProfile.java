@@ -10,6 +10,7 @@ public class ConnectionProfile implements Serializable {
     public ConnectionProfile(String name) {
         this.name = name;
         this.loginCredential = new LoginCredential("", "", "", "", "", "");
+        this.serverImplementation = new ServerImplementation();
     }
 
     public LoginCredential getLoginCredential() {
