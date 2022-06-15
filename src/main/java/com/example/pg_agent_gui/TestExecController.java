@@ -85,7 +85,6 @@ public class TestExecController {
             for (List<PGConfigDelta> combination : configCombinations) {
                 for (int i = 1; i <= testPlan.getNumberOfRuns(); i++) {
                     SQLTestRunner testRunner = new SQLTestRunner(entry.getKey(), entry.getValue(), testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns(), server.getLoginCredential());
-                    //SQLTestRunner testRunner = new SQLTestRunner(entry.getKey(), entry.getValue(), testPlan.getNumberOfThreads(), testPlan.getNumberOfRuns(), server.getLoginCredential());
                     testRunner.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                         @Override
                         public void handle(WorkerStateEvent event) {

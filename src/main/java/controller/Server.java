@@ -18,6 +18,7 @@ public class Server {
     private ServerImplementation serverImplementation;
     private Connection jdbcConnection;
     private Session sshSession;
+
     public Server(ConnectionProfile connectionProfile) {
         this.loginCredential = connectionProfile.getLoginCredential();
         this.serverImplementation = connectionProfile.getServerImplementation();
@@ -207,7 +208,7 @@ public class Server {
         String result = "";
         ChannelExec channel = null;
         try {
-            channel = (ChannelExec)sshSession.openChannel("exec");
+            channel = (ChannelExec) sshSession.openChannel("exec");
             channel.setCommand("bash -s");
             channel.setInputStream(null);
             OutputStream out = channel.getOutputStream();

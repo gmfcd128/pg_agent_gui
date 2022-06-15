@@ -49,6 +49,7 @@ public class MacroExecController {
                 macroResultTextDisplay.setText(text);
             }
         };
+        macroNameLabel.setText(shortcut.name);
         macroResultTextDisplay.setVisible(false);
         macroResultTableDisplay.setVisible(false);
         if (shortcut.type == ShortcutType.SHELL) {

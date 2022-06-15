@@ -153,6 +153,9 @@ public class LogSearchHandlerTest {
 
     @Test
     public void setDatabaseContains() {
+        logSearchHandler.setDatabaseContains(List.of("jlin"));
+        List<PGLogEntry> result = logSearchHandler.calculateResult();
+        assertEquals(1, result.size());
     }
 
     @Test
@@ -161,7 +164,15 @@ public class LogSearchHandlerTest {
 
     @Test
     public void setFilterTimeUpper() {
-
+        SimpleDateFormat pgLogTimestampMillisecond = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
+        try {
+            logSearchHandler.setFilterTimeUpper(pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.967 GMT"));
+            assertEquals(1, logSearchHandler.calculateResult().size());
+            logSearchHandler.setFilterTimeUpper(pgLogTimestampMillisecond.parse("2022-06-01 01:24:10.966 GMT"));
+            assertEquals(0, logSearchHandler.calculateResult().size());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

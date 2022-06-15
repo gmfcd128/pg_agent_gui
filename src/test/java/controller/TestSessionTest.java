@@ -33,20 +33,28 @@ public class TestSessionTest {
         Set<List<PGConfigDelta>> result = testSession.createCombinations();
         assertEquals(4, result.size());
         for (List<PGConfigDelta> combination : result) {
-                assertTrue(listEqualsIgnoreOrder(combination, List.of(new PGConfigDelta("test1", "01", null, "string"), new PGConfigDelta("test2", "01", null, "string")))
-                || listEqualsIgnoreOrder(combination, List.of(new PGConfigDelta("test1", "01", null, "string"), new PGConfigDelta("test2", "02", null, "string")))
-                || listEqualsIgnoreOrder(combination, List.of(new PGConfigDelta("test1", "02", null, "string"), new PGConfigDelta("test2", "01", null, "string")))
-                || listEqualsIgnoreOrder(combination, List.of(new PGConfigDelta("test1", "02", null, "string"), new PGConfigDelta("test2", "02", null, "string"))));
+                assertTrue(checkListContent(combination, List.of(new PGConfigDelta("test1", "01", null, "string"), new PGConfigDelta("test2", "01", null, "string")))
+                || checkListContent(combination, List.of(new PGConfigDelta("test1", "01", null, "string"), new PGConfigDelta("test2", "02", null, "string")))
+                || checkListContent(combination, List.of(new PGConfigDelta("test1", "02", null, "string"), new PGConfigDelta("test2", "01", null, "string")))
+                || checkListContent(combination, List.of(new PGConfigDelta("test1", "02", null, "string"), new PGConfigDelta("test2", "02", null, "string"))));
 
          }
-        //assertTrue(result.contains());
-        //assertTrue(result.contains(List.of(new PGConfigDelta("test1", "01", null, "string"), new PGConfigDelta("test2", "02", null, "string"))));
-        //assertTrue(result.contains(List.of(new PGConfigDelta("test1", "02", null, "string"), new PGConfigDelta("test2", "01", null, "string"))));
-        //assertTrue(result.contains(List.of(new PGConfigDelta("test1", "02", null, "string"), new PGConfigDelta("test2", "02", null, "string"))));
     }
 
-    public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
-        return new HashSet<>(list1).equals(new HashSet<>(list2));
+    public boolean checkListContent(List<PGConfigDelta> src, List<PGConfigDelta> target) {
+        for(int i = 0; i < src.size(); i++) {
+            boolean found = false;
+            for (int j = 0; j < target.size(); j++) {
+                if (src.get(i).getName().equals(target.get(j).getName()) && src.get(i).getValue().equals(target.get(j).getValue())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

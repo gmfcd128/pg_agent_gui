@@ -2,18 +2,16 @@ package controller;
 
 import javafx.concurrent.Task;
 import model.LoginCredential;
+import model.TestResult;
+import us.abstracta.jmeter.javadsl.core.TestPlanStats;
 
 import java.io.IOException;
 import java.sql.Driver;
 import java.time.Duration;
 
-import model.TestResult;
-import org.apache.xpath.operations.Bool;
-import us.abstracta.jmeter.javadsl.core.TestPlanStats;
-
 import static us.abstracta.jmeter.javadsl.JmeterDsl.testPlan;
-import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcConnectionPool;
 import static us.abstracta.jmeter.javadsl.JmeterDsl.threadGroup;
+import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcConnectionPool;
 import static us.abstracta.jmeter.javadsl.jdbc.JdbcJmeterDsl.jdbcSampler;
 
 

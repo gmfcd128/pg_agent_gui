@@ -9,11 +9,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -30,52 +30,34 @@ public class ConfigManagerTest {
     @Mock
     Server server;
 
+    String[][] testData;
+    int index;
+    boolean firstTime;
+
     @Before
     public void setUp() throws Exception {
-        Mockito.when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
-        Mockito.when(resultSet.getString("name"))
-                .thenReturn("authentication_timeout")
-                .thenReturn("array_nulls")
-                //.thenReturn("archive_mode")
-                .thenReturn("archive_command")
-                .thenReturn("autovacuum_analyze_scale_factor");
-        Mockito.when(resultSet.getString("setting"))
-                .thenReturn("60")
-                .thenReturn("on")
-                //.thenReturn("off")
-                .thenReturn("(disabled)")
-                .thenReturn("0.05");
-        Mockito.when(resultSet.getString("unit"))
-                .thenReturn("s")
-                .thenReturn(null)
-                //.thenReturn(null)
-                .thenReturn(null)
-                .thenReturn(null);
-        Mockito.when(resultSet.getString("vartype"))
-                .thenReturn("integer")
-                .thenReturn("bool")
-                //.thenReturn("enum")
-                .thenReturn("string")
-                .thenReturn("real");
-        Mockito.when(resultSet.getInt("min_val"))
-                .thenReturn(1)
-                .thenReturn(0)
-                //.thenReturn(0)
-                .thenReturn(0)
-                .thenReturn(0);
-        Mockito.when(resultSet.getString("max_val"))
-                .thenReturn("600")
-                .thenReturn("0")
-                //.thenReturn("0")
-                .thenReturn("0")
-                .thenReturn("100");
-        Mockito.when(resultSet.getArray("enumvals"))
-                .thenReturn(null)
-                .thenReturn(null)
-                //.thenReturn(jdbcConnection.createArrayOf("string",  new String[]{"always","on", "off"}))
-                .thenReturn(null)
-                .thenReturn(null);
+        firstTime = true;
+        testData = new String[][]{{"authentication_timeout", "60", "s", "integer", "1", "600","null"},
+                {"array_nulls", "on", "null", "bool", "0", "0", "null"},
+                {"archive_command", "(disabled)", "null", "string", "0", "0", "null"},
+                {"autovacuum_analyze_scale_factor", "0.05", "null", "real", "0", "100", "null"}};
+        index = 0;
+        Mockito.when(resultSet.next()).thenAnswer((Answer) invocation -> {
+            if (firstTime) {
+                firstTime = false;
+            } else {
+                index++;
+            }
 
+            return index < 4;
+        });
+        Mockito.when(resultSet.getString("name")).thenAnswer((Answer<String>) invocation -> testData[index][0]);
+        Mockito.when(resultSet.getString("setting")).thenAnswer((Answer<String>) invocation -> testData[index][1]);
+        Mockito.when(resultSet.getString("unit")).thenAnswer((Answer<String>) invocation -> testData[index][2]);
+        Mockito.when(resultSet.getString("vartype")).thenAnswer((Answer<String>) invocation -> testData[index][3]);
+        Mockito.when(resultSet.getInt("min_val")).thenAnswer((Answer<Integer>) invocation -> Integer.parseInt(testData[index][4]));
+        Mockito.when(resultSet.getString("max_val")).thenAnswer((Answer<String>) invocation -> testData[index][5]);
+        //Mockito.when(resultSet.getArray("enumvals")).thenReturn(null);
 
         Mockito.when(statement.executeQuery("SELECT * FROM pg_settings WHERE (source != 'session' AND context != 'internal');"))
                 .thenReturn(resultSet);
